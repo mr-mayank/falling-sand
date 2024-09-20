@@ -1,0 +1,95 @@
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.color-preview {
+    width: 80px;
+    height: 40px;
+    margin-bottom: 10px;
+    border: 2px solid black;
+}
+
+.grid-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.color-selector {
+    display: flex;
+    flex-direction: column;
+}
+
+.color-selector.left {
+    margin-right: 10px;
+}
+
+.color-selector.right {
+    margin-left: 10px;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    cursor: pointer;
+    border: 2px solid black;
+}
+
+.color-option.selected {
+    border: 2px solid white;
+}
+
+.grid-container {
+    display: grid;
+    gap: 1px;
+    /* background-color: #ccc; */
+    border: 2px solid black;
+    cursor: none;
+}
+
+.grid-cell {
+    background-color: white;
+    transition: background-color 0.01s ease;
+}
+
+.grid-cell.fourth,
+.fourth {
+    background-color: orange;
+}
+
+.grid-cell.first,
+.first {
+    background-color: blue;
+}
+
+.grid-cell.second,
+.second {
+    background-color: red;
+}
+
+.grid-cell.third,
+.third {
+    background-color: green;
+}
+
+.custom-cursor {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #fff;
+    border: 2px solid #000000;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+}
