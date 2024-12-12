@@ -1,0 +1,128 @@
+/* Grid container */
+.game-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.tile-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2.5px;
+    width: 25%;
+    max-width: 900px;
+    margin: 0 auto;
+    margin-top: 4rem;
+}
+
+/* Individual tiles */
+.tile {
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(135deg, #c9e4f5, #9ad3bc);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.tile.occupied {
+    display: none;
+}
+
+.tile:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+/* Splash effect */
+.tile::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: none;
+    pointer-events: none;
+}
+
+.tile.clicked::after {
+    width: 200%;
+    height: 200%;
+    animation: splash 0.6s ease-out;
+}
+
+/* Splash animation */
+@keyframes splash {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+.ship-container {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.octa {
+    aspect-ratio: 1;
+    --o: calc(50% * tan(-22.5deg));
+    clip-path: polygon(var(--o) 50%, 50% var(--o), calc(100% - var(--o)) 50%, 50% calc(100% - var(--o)));
+    background: linear-gradient(-45deg, #CD8C52, #5E9FA3);
+    border-radius: 25%;
+}
+
+.ship {
+    background: linear-gradient(-45deg, #CD8C52, #5E9FA3);
+    border-radius: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.draggable-ship {
+    cursor: grab;
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+.rotate-container {
+    margin-top: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #6ec39a;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    background-color: #70c9c3;
+}
+
+.placed-ship {
+    position: relative;
+    transform-origin: center;
+}
