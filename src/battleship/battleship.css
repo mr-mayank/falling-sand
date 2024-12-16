@@ -5,6 +5,8 @@
     flex-direction: column;
     align-items: center;
     margin-top: 2rem;
+    width: 100%;
+    height: 100%;
 }
 
 .tile-grid {
@@ -15,15 +17,26 @@
     gap: 2.5px;
     width: 25%;
     max-width: 900px;
-    margin: 0 auto;
     margin-top: 4rem;
+}
+
+/* Theme-specific base styles */
+:root {
+    --tile-bg-light: linear-gradient(135deg, #A1C4FD, #C2E9FB);
+    --tile-bg-dark: linear-gradient(135deg, #614385, #516395);
+    --tile-border-light: 1px solid #ddd;
+    --tile-border-dark: 1px solid rgba(255, 255, 255, 0.2);
+    --ship-bg-dark: linear-gradient(-45deg, #43469d, #1BFFFF);
+    --ship-bg-light: linear-gradient(-45deg, #02AABD, #00CDAC);
+    --button-bg-light: black;
+    --button-bg-dark: white;
 }
 
 /* Individual tiles */
 .tile {
     aspect-ratio: 1 / 1;
-    background: linear-gradient(135deg, #c9e4f5, #9ad3bc);
-    border: 1px solid #ddd;
+    background: var(--tile-bg-light);
+    border: var(--tile-border-light);
     border-radius: 8px;
     display: flex;
     justify-content: center;
@@ -31,6 +44,12 @@
     position: relative;
     overflow: hidden;
     transition: transform 0.3s ease;
+}
+
+.theme-dark .tile {
+    background: var(--tile-bg-dark);
+    border: var(--tile-border-dark);
+    color: var(--text-primary-dark);
 }
 
 .tile.occupied {
@@ -83,17 +102,26 @@
     aspect-ratio: 1;
     --o: calc(50% * tan(-22.5deg));
     clip-path: polygon(var(--o) 50%, 50% var(--o), calc(100% - var(--o)) 50%, 50% calc(100% - var(--o)));
-    background: linear-gradient(-45deg, #CD8C52, #5E9FA3);
+    background: var(--ship-bg-light);
     border-radius: 25%;
 }
 
+.theme-dark .octa {
+    background: var(--ship-bg-dark);
+}
+
 .ship {
-    background: linear-gradient(-45deg, #CD8C52, #5E9FA3);
+    background: var(--ship-bg-light);
     border-radius: 25%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+.theme-dark .ship {
+    background: var(--ship-bg-dark);
+}
+
 
 .draggable-ship {
     cursor: grab;
@@ -108,21 +136,46 @@
 button {
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    background-color: #6ec39a;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    z-index: 10;
+    background: transparent;
+    color: var(--button-bg-light);
     margin-bottom: 15px;
+    border: none;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    z-index: 10;
 }
 
 button:hover {
-    background-color: #70c9c3;
+    color: white;
 }
 
-.placed-ship {
-    position: relative;
-    transform-origin: center;
+.delete-btn {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(182, 233, 249);
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.main-btn {
+    background-color: var(--button-bg-light);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0;
+}
+
+.theme-dark .main-btn {
+    background-color: var(--button-bg-dark);
+    color: black;
+}
+
+.container {
+    display: flex;
+    gap: 2rem;
 }

@@ -1,13 +1,23 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
 
-// Create Theme Context
-const ThemeContext = createContext({
+interface ThemeContextType {
+  theme: string;
+  toggleTheme: () => void;
+}
+
+const ThemeContext = createContext<ThemeContextType>({
   theme: "dark",
   toggleTheme: () => {},
 });
 
 // Theme Provider Component
-export const ThemeProvider = ({ children }) => {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState(() => {
     // Check local storage for saved theme or default to dark
     return localStorage.getItem("app-theme") || "dark";
@@ -31,5 +41,4 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use theme context
 export const useTheme = () => useContext(ThemeContext);

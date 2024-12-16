@@ -1,6 +1,7 @@
 import React from "react";
 import "./battleship.css";
 import BattleshipController from "./battleship-controller";
+import RotateIcon from "../assets/icons/rotate-icon";
 
 const TileGrid = () => {
   const {
@@ -8,15 +9,32 @@ const TileGrid = () => {
     clickedTile,
     ships,
     selectedShip,
+    theme,
     renderPlacedShips,
     handleTileClick,
     handleDrop,
     handleDragStart,
     handleShipClick,
     handleRotate,
+    handleRandomPlacement,
+    saveShipPlacement,
   } = BattleshipController();
+
   return (
-    <div className="game-container">
+    <div
+      className={`game-container ${
+        theme === "dark" ? "theme-dark" : "theme-light"
+      }`}
+    >
+      <div className="container">
+        <button className="main-btn" onClick={handleRandomPlacement}>
+          Random
+        </button>
+
+        <button className="main-btn save" onClick={saveShipPlacement}>
+          Save
+        </button>
+      </div>
       <div
         className="tile-grid"
         onDragOver={(e) => e.preventDefault()}
@@ -32,8 +50,9 @@ const TileGrid = () => {
                   : ""
               } ${tile.isOccupied ? "occupied" : ""}`}
               onClick={() => handleTileClick(rowIndex, colIndex)}
+              onDragOver={(e) => e.preventDefault()}
               onDrop={() => handleDrop(rowIndex, colIndex)}
-            ></div>
+            />
           ))
         )}
         {renderPlacedShips()}
@@ -57,12 +76,18 @@ const TileGrid = () => {
                   ship.orientation === "horizontal"
                     ? "40px"
                     : `${ship.size * 48}px`,
-                cursor: "pointer",
               }}
             >
               {selectedShip && selectedShip.id === ship.id && (
                 <div className="rotate-container">
-                  <button onClick={(e) => handleRotate(e)}>Rotate</button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      handleRotate(e);
+                    }}
+                  >
+                    <RotateIcon />
+                  </button>
                 </div>
               )}
             </div>

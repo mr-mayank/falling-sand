@@ -1,6 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Sun, Moon } from "lucide-react";
 import { useTheme } from "../context/theme-context";
+import SunIcon from "../assets/icons/sun-icon";
+import MoonIcon from "../assets/icons/moon-icon";
+import HomeIcon from "../assets/icons/home-icon";
+import React, { ReactNode } from "react";
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -11,7 +14,7 @@ const ThemeToggle = () => {
       className="theme-toggle"
       aria-label="Toggle Theme"
     >
-      {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>
   );
 };
@@ -50,7 +53,7 @@ const HomePage = () => {
           Game Playground
         </h1>
         <div className="game-links">
-          <Link to="/grid" className="game-link">
+          <Link to="/falling-sand" className="game-link">
             <div className="game-card">
               <h2>Falling Sand</h2>
               <p>Simulate particle interactions</p>
@@ -69,7 +72,7 @@ const HomePage = () => {
 };
 
 // Game Layout Component with Home Button
-const GameLayout = ({ children }) => {
+const GameLayout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
@@ -81,7 +84,7 @@ const GameLayout = ({ children }) => {
         className="home-button"
         aria-label="Return to Home"
       >
-        <Home size={24} strokeWidth={2} />
+        <HomeIcon />
       </button>
       {children}
     </div>

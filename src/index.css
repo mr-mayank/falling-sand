@@ -39,10 +39,6 @@ body {
   color: var(--text-primary-light);
 }
 
-.app-container {
-  min-height: 100vh;
-}
-
 .animated-background {
   position: fixed;
   top: 0;
@@ -94,6 +90,7 @@ body {
 
 .theme-toggle:hover {
   transform: scale(1.1);
+  color: inherit;
 }
 
 .content {
@@ -247,11 +244,12 @@ body {
 
 .theme-light .home-button {
   background: var(--bg-secondary-light);
-  border: 1px solid var(--border-color-light);
+  border: 1px solid black;
 }
 
 .home-button:hover {
   transform: scale(1.1);
+  color: inherit;
 }
 
 /* Responsive adjustments */
@@ -259,5 +257,87 @@ body {
   .game-links {
     flex-direction: column;
     align-items: center;
+  }
+}
+
+/* Overall page styling */
+.battle-home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: inherit;
+  color: inherit;
+  font-family: "Arial", sans-serif;
+  text-align: center;
+}
+
+/* Title styling */
+.battle-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Description styling */
+.battle-description {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* Buttons container */
+.buttons-container {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Button styling */
+.battle-home-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: inherit;
+  background: inherit;
+  border: 2px solid var(--border-color-light);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.theme-dark .battle-home-button {
+  background-color: var(--bg-secondary-dark);
+}
+
+
+/* Hover effect for buttons */
+.battle-home-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: inherit;
+  transform: scale(1.1);
+}
+
+/* Button-specific animations */
+.play-vs-bot {
+  animation: float 2s infinite ease-in-out;
+}
+
+.play-vs-friend {
+  animation: float 2s infinite ease-in-out 0.5s;
+}
+
+/* Float animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
   }
 }
