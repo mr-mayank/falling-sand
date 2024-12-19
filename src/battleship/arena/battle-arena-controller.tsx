@@ -58,9 +58,9 @@ const useBattleArenaController = () => {
       const encryptedGridData = localStorage.getItem(`${id}-grid`);
       const gameId = localStorage.getItem("game-id");
 
-      let keyBaseBot64 = localStorage.getItem("bot-key");
-      let encryptedShipsDataBot = localStorage.getItem("bot-ships");
-      let encryptedGridDataBot = localStorage.getItem("bot-grid");
+      const keyBaseBot64 = localStorage.getItem("bot-key");
+      const encryptedShipsDataBot = localStorage.getItem("bot-ships");
+      const encryptedGridDataBot = localStorage.getItem("bot-grid");
 
       if (
         !exportedKeyBase64 ||
@@ -146,8 +146,6 @@ const useBattleArenaController = () => {
 
           setPlayerOneShips(decryptedShipsData);
           setPlayerOneGrid(decryptedGridData);
-
-          console.log(decryptedGridData);
         }
       }
 
@@ -222,7 +220,7 @@ const useBattleArenaController = () => {
       console.error("Error loading game:", error);
       navigate("/battleship");
     }
-    //eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {

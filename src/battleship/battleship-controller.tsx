@@ -45,6 +45,8 @@ const BattleshipController = () => {
   );
 
   const [selectedShip, setSelectedShip] = useState<ShipInterface | null>(null);
+  const [loadPrevDataModal, setLoadPrevDataModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleShipClick = (ship: ShipInterface) => {
     if (ship.id === selectedShip?.id) {
@@ -315,11 +317,63 @@ const BattleshipController = () => {
       });
   };
 
+  const clearSaveData = (id: string) => {
+    localStorage.removeItem("game-id");
+    localStorage.removeItem(`${id}-key`);
+    localStorage.removeItem(`${id}-ships`);
+    localStorage.removeItem(`${id}-grid`);
+    localStorage.removeItem("bot-key");
+    localStorage.removeItem("bot-ships");
+    localStorage.removeItem("bot-grid");
+  };
+
+  const handleLoadGame = () => {
+    const id = localStorage.getItem("game-id");
+    id && navigate(`/battleship/${id}`);
+  };
+
+  const handleStartNewGame = () => {
+    const id = localStorage.getItem("game-id");
+    id && clearSaveData(id);
+    setLoadPrevDataModal(false);
+  };
+
   useEffect(() => {
-    const gameId = localStorage.getItem("game-id");
-    if (gameId) {
-      // fetchGame(gameId);
+    const id = localStorage.getItem("game-id");
+    if (id) {
+      const exportedKeyBase64 = localStorage.getItem(`${id}-key`);
+      const encryptedShipsData = localStorage.getItem(`${id}-ships`);
+      const encryptedGridData = localStorage.getItem(`${id}-grid`);
+      const keyBaseBot64 = localStorage.getItem("bot-key");
+      const encryptedShipsDataBot = localStorage.getItem("bot-ships");
+      const encryptedGridDataBot = localStorage.getItem("bot-grid");
+
+      if (
+        exportedKeyBase64 ||
+        encryptedShipsData ||
+        encryptedGridData ||
+        keyBaseBot64 ||
+        encryptedShipsDataBot ||
+        encryptedGridDataBot
+      ) {
+        if (
+          exportedKeyBase64 &&
+          encryptedShipsData &&
+          encryptedGridData &&
+          keyBaseBot64 &&
+          encryptedShipsDataBot &&
+          encryptedGridDataBot
+        ) {
+          setLoadPrevDataModal(true);
+        }
+      } else {
+        clearSaveData(id);
+      }
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -336,6 +390,10 @@ const BattleshipController = () => {
     handleRandomBtnClick,
     selectedShip,
     saveShipPlacement,
+    loadPrevDataModal,
+    handleLoadGame,
+    handleStartNewGame,
+    isLoading,
   };
 };
 

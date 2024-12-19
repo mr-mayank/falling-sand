@@ -2,6 +2,8 @@ import React from "react";
 import "../assets/css/battleship.css";
 import BattleshipController from "./battleship-controller";
 import RotateIcon from "../assets/icons/rotate-icon";
+import LoadSavedGameModal from "./load-save-game-modal/load-save-game-modal";
+import BattleshipLoader from "../components/battleship-loader";
 
 const TileGrid = () => {
   const {
@@ -10,6 +12,8 @@ const TileGrid = () => {
     ships,
     selectedShip,
     theme,
+    loadPrevDataModal,
+    isLoading,
     renderPlacedShips,
     handleTileClick,
     handleDrop,
@@ -18,7 +22,22 @@ const TileGrid = () => {
     handleRotate,
     handleRandomBtnClick,
     saveShipPlacement,
+    handleLoadGame,
+    handleStartNewGame,
   } = BattleshipController();
+
+  if (isLoading) {
+    return <BattleshipLoader />;
+  }
+
+  if (loadPrevDataModal && !isLoading) {
+    return (
+      <LoadSavedGameModal
+        handleLoadGame={handleLoadGame}
+        handleStartNewGame={handleStartNewGame}
+      />
+    );
+  }
 
   return (
     <div

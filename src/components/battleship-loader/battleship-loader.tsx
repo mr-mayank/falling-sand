@@ -1,9 +1,11 @@
 import React from "react";
 import "../../assets/css/battleship-loader.css";
 import { useTheme } from "../../context/theme-context";
+import { useParams } from "react-router-dom";
 
 const BattleshipLoader = () => {
   const { theme } = useTheme();
+  const { id } = useParams();
 
   return (
     <div
@@ -24,7 +26,7 @@ const BattleshipLoader = () => {
           <div className="bubble bubble-3"></div>
         </div>
       </div>
-      <div className="loading-text">Preparing for Battle...</div>
+      {id && <div className="loading-text">Preparing for Battle...</div>}
     </div>
   );
 };
