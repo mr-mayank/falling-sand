@@ -1,5 +1,5 @@
 import React from "react";
-import "./battleship.css";
+import "../assets/css/battleship.css";
 import BattleshipController from "./battleship-controller";
 import RotateIcon from "../assets/icons/rotate-icon";
 
@@ -16,7 +16,7 @@ const TileGrid = () => {
     handleDragStart,
     handleShipClick,
     handleRotate,
-    handleRandomPlacement,
+    handleRandomBtnClick,
     saveShipPlacement,
   } = BattleshipController();
 
@@ -27,7 +27,7 @@ const TileGrid = () => {
       }`}
     >
       <div className="container">
-        <button className="main-btn" onClick={handleRandomPlacement}>
+        <button className="main-btn" onClick={handleRandomBtnClick}>
           Random
         </button>
 

@@ -8,3 +8,17 @@ export const shipsData = [
 
 export const GRID_WIDTH = 9;
 export const GRID_HEIGHT = 7;
+
+export class DataIntegrityError extends Error {
+  constructor() {
+    super();
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, DataIntegrityError);
+    }
+
+    this.name = "DataIntegrityError";
+    this.message =
+      "Data integrity check failed. The saved game may have been tampered with.";
+  }
+}

@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useTheme } from "../context/theme-context";
-import SunIcon from "../assets/icons/sun-icon";
-import MoonIcon from "../assets/icons/moon-icon";
-import HomeIcon from "../assets/icons/home-icon";
 import React, { ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from "../../context/theme-context";
+import SunIcon from "../../assets/icons/sun-icon";
+import MoonIcon from "../../assets/icons/moon-icon";
+import HomeIcon from "../../assets/icons/home-icon";
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();

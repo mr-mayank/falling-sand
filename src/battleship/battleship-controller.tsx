@@ -1,25 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { shipsData, GRID_WIDTH, GRID_HEIGHT } from "../constants/constants";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/theme-context";
 import DeleteIcon from "../assets/icons/delete-icon";
 import cryptoRandomString from "crypto-random-string";
 import { toast } from "react-toastify";
+import {
+  encryptData,
+  generateKey,
+  handleRandomPlacement,
+  validatePlacement,
+} from "../utils";
+import { ShipInterface } from "../constants/interface";
 
 interface TileInterface {
   row: number;
   col: number;
 }
 
-interface ShipInterface {
-  id: number;
-  placed: boolean;
-  position: { row: number; col: number } | null;
-  orientation: string;
-  size: number;
-}
-
 const BattleshipController = () => {
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const [grid, setGrid] = useState(() =>
     Array.from({ length: GRID_HEIGHT }, () =>
@@ -29,8 +30,11 @@ const BattleshipController = () => {
       }))
     )
   );
+
   const [clickedTile, setClickedTile] = useState<TileInterface | null>(null);
+
   const [draggedShip, setDraggedShip] = useState<ShipInterface | null>(null);
+
   const [ships, setShips] = useState<ShipInterface[]>(
     shipsData.map((ship) => ({
       ...ship,
@@ -39,7 +43,9 @@ const BattleshipController = () => {
       orientation: "horizontal",
     }))
   );
+
   const [selectedShip, setSelectedShip] = useState<ShipInterface | null>(null);
+
   const handleShipClick = (ship: ShipInterface) => {
     if (ship.id === selectedShip?.id) {
       setSelectedShip(null);
@@ -105,69 +111,6 @@ const BattleshipController = () => {
     setTimeout(() => setClickedTile(null), 600);
   };
 
-  const handleRandomPlacement = () => {
-    const newGrid = grid.map((row) =>
-      row.map(() => ({
-        isOccupied: false,
-        shipId: -1,
-      }))
-    );
-
-    const newShips = ships.map((ship) => ({
-      ...ship,
-      placed: false,
-      position: null,
-      orientation: "horizontal",
-    }));
-
-    const tryPlaceShip = (ship: ShipInterface): ShipInterface => {
-      for (let attempts = 0; attempts < 100; attempts++) {
-        const orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
-        const maxRow =
-          orientation === "horizontal" ? GRID_HEIGHT : GRID_HEIGHT - ship.size;
-        const maxCol =
-          orientation === "horizontal" ? GRID_WIDTH - ship.size : GRID_WIDTH;
-
-        const row = Math.floor(Math.random() * maxRow);
-        const col = Math.floor(Math.random() * maxCol);
-
-        if (validatePlacement(row, col, ship.size, orientation, newGrid)) {
-          // Place the ship on the grid
-          if (orientation === "horizontal") {
-            for (let i = 0; i < ship.size; i++) {
-              newGrid[row][col + i] = {
-                isOccupied: true,
-                shipId: ship.id,
-              };
-            }
-          } else {
-            for (let i = 0; i < ship.size; i++) {
-              newGrid[row + i][col] = {
-                isOccupied: true,
-                shipId: ship.id,
-              };
-            }
-          }
-
-          return {
-            ...ship,
-            placed: true,
-            position: { row, col },
-            orientation,
-          };
-        }
-      }
-
-      // If unable to place after 100 attempts, return ship as unplaced.
-      return ship;
-    };
-
-    const placedShips = newShips.map((ship) => tryPlaceShip(ship));
-
-    setGrid(newGrid);
-    setShips(placedShips);
-  };
-
   const handleDragStart = (
     ship: ShipInterface,
     event: React.DragEvent<HTMLDivElement>
@@ -182,7 +125,18 @@ const BattleshipController = () => {
     setDraggedShip(ship);
   };
 
-  const saveShipPlacement = () => {
+  const handleRandomBtnClick = () => {
+    const { newGrid, placedShips } = handleRandomPlacement(
+      grid,
+      ships,
+      "player"
+    );
+
+    setGrid(newGrid);
+    setShips(placedShips);
+  };
+
+  const saveShipPlacement = async () => {
     const isNotAllPlaced = ships.some((ship) => ship.placed === false);
 
     if (isNotAllPlaced) {
@@ -190,9 +144,48 @@ const BattleshipController = () => {
       return;
     }
 
-    const generateRandomId = () => {
-      return cryptoRandomString({ length: 10, type: "url-safe" });
-    };
+    try {
+      const gameId = cryptoRandomString({ length: 10, type: "url-safe" });
+
+      const shipsData = ships.map((ship) => ({
+        id: ship.id,
+        position: ship.position,
+        orientation: ship.orientation,
+        size: ship.size,
+      }));
+
+      const gridData = grid.flatMap((row, rowIndex) =>
+        row.map((tile, colIndex) => ({
+          row: rowIndex,
+          col: colIndex,
+          shipId: tile.shipId,
+          isRevealed: false,
+        }))
+      );
+
+      const key = await generateKey();
+
+      const exportedKey = await window.crypto.subtle.exportKey("raw", key);
+      const exportedKeyBase64 = btoa(
+        String.fromCharCode.apply(null, Array.from(new Uint8Array(exportedKey)))
+      );
+
+      const encryptedShipsData = await encryptData(shipsData, key);
+      const encryptedGridData = await encryptData(gridData, key);
+
+      localStorage.setItem("game-id", gameId);
+      localStorage.setItem(`${gameId}-key`, exportedKeyBase64);
+      localStorage.setItem(`${gameId}-ships`, encryptedShipsData);
+      localStorage.setItem(`${gameId}-grid`, encryptedGridData);
+
+      toast.success("Game saved successfully!", {
+        autoClose: 1000,
+      });
+      navigate(`/battleship/${gameId}`);
+    } catch (error) {
+      console.error("Error saving game:", error);
+      toast.error("Failed to save game");
+    }
   };
 
   const handleDrop = (rowIndex: number, colIndex: number) => {
@@ -276,34 +269,6 @@ const BattleshipController = () => {
     setDraggedShip(null);
     setDragOffset(0);
   };
-  const validatePlacement = (
-    rowIndex: number,
-    colIndex: number,
-    size: number,
-    orientation: string,
-    newGrid: {
-      isOccupied: boolean;
-      shipId: number;
-    }[][]
-  ) => {
-    if (orientation === "horizontal") {
-      if (colIndex + size > GRID_WIDTH) return false;
-
-      for (let i = 0; i < size; i++) {
-        const tile = newGrid[rowIndex]?.[colIndex + i];
-        if (!tile || tile.isOccupied) return false;
-      }
-    } else {
-      if (rowIndex + size > GRID_HEIGHT) return false;
-
-      for (let i = 0; i < size; i++) {
-        const tile = newGrid[rowIndex + i]?.[colIndex];
-        if (!tile || tile.isOccupied) return false;
-      }
-    }
-
-    return true;
-  };
 
   const renderPlacedShips = () => {
     return ships
@@ -350,6 +315,13 @@ const BattleshipController = () => {
       });
   };
 
+  useEffect(() => {
+    const gameId = localStorage.getItem("game-id");
+    if (gameId) {
+      // fetchGame(gameId);
+    }
+  }, []);
+
   return {
     grid,
     theme,
@@ -361,7 +333,7 @@ const BattleshipController = () => {
     handleDragStart,
     handleShipClick,
     handleRotate,
-    handleRandomPlacement,
+    handleRandomBtnClick,
     selectedShip,
     saveShipPlacement,
   };

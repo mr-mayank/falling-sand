@@ -4,9 +4,60 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 2rem;
     width: 100%;
-    height: 100%;
+    justify-content: center;
+    height: 100vh;
+}
+
+.game-container2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    gap: 2rem;
+    flex-direction: column;
+}
+
+.battlefield-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.battlefield-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Responsive layout for larger screens */
+@media screen and (min-width: 1024px) {
+    .game-container2 {
+        flex-direction: row;
+        gap: 4rem;
+    }
+
+    .battlefield-container {
+        width: 40%;
+    }
+
+    .tile {
+        border-radius: 9px;
+    }
+}
+
+.tile-grid2 {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+    gap: 2.5px;
+    width: 70%;
+    max-width: 900px;
 }
 
 .tile-grid {
@@ -37,7 +88,7 @@
     aspect-ratio: 1 / 1;
     background: var(--tile-bg-light);
     border: var(--tile-border-light);
-    border-radius: 8px;
+    border-radius: 6px;
     display: flex;
     justify-content: center;
     align-items: center;

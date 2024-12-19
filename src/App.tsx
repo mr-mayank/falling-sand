@@ -2,9 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "./context/theme-context";
 import FallingSand from "./falling-sand";
-import { GameLayout, HomePage } from "./home";
+import { GameLayout, HomePage } from "./components/home";
 import Home from "./battleship/home";
-import Battleship from "./battleship";
 
 const App = () => {
   return (
@@ -21,18 +20,10 @@ const App = () => {
             }
           />
           <Route
-            path="/battleship"
+            path="/battleship/*"
             element={
               <GameLayout>
                 <Home />
-              </GameLayout>
-            }
-          />
-          <Route
-            path="/battleship/create"
-            element={
-              <GameLayout>
-                <Battleship />
               </GameLayout>
             }
           />
