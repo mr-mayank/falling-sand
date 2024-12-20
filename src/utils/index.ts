@@ -177,7 +177,7 @@ export const handleRandomPlacement = (
               newGrid[row][col + i] = {
                 isOccupied: true,
                 shipId: ship.id,
-                isRevealed: true,
+                isRevealed: false,
               };
             } else {
               newGrid[row][col + i] = {
@@ -192,7 +192,7 @@ export const handleRandomPlacement = (
               newGrid[row + i][col] = {
                 isOccupied: true,
                 shipId: ship.id,
-                isRevealed: true,
+                isRevealed: false,
               };
             } else {
               newGrid[row + i][col] = {

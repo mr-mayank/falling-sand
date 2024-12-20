@@ -8,6 +8,7 @@ export const shipsData = [
 
 export const GRID_WIDTH = 9;
 export const GRID_HEIGHT = 7;
+export const TOTAL_SHIP_SIZE = 17;
 
 export class DataIntegrityError extends Error {
   constructor() {

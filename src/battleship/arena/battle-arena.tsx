@@ -3,8 +3,15 @@ import useBattleArenaController from "./battle-arena-controller";
 import BattleshipLoader from "../../components/battleship-loader";
 
 const BattleArena = () => {
-  const { playerOneGrid, theme, playerTwoGrid, isLoading } =
-    useBattleArenaController();
+  const {
+    playerOneGrid,
+    theme,
+    playerTwoGrid,
+    isLoading,
+    clickedTileP1,
+    clickedTileP2,
+    handlePlayerOneGridClick,
+  } = useBattleArenaController();
 
   if (isLoading || playerTwoGrid.length === 0 || playerOneGrid.length === 0) {
     return <BattleshipLoader />;
@@ -23,10 +30,15 @@ const BattleArena = () => {
             row.map((tile, colIndex) => (
               <div
                 key={`bot-${rowIndex}-${colIndex}`}
-                className={`tile ${tile.isRevealed ? "revealed" : ""} ${
-                  tile.shipId !== -1 ? "ship" : ""
-                }`}
-                onClick={() => console.log("Bot grid clicked")}
+                className={`tile ${
+                  tile.isRevealed && tile.shipId === -1 ? "revealed" : ""
+                } ${
+                  clickedTileP1?.row === rowIndex &&
+                  clickedTileP1?.col === colIndex
+                    ? "clicked"
+                    : ""
+                }  ${tile.shipId !== -1 && tile.isRevealed ? "ship" : ""}`}
+                onClick={() => handlePlayerOneGridClick(rowIndex, colIndex)}
               />
             ))
           )}
@@ -40,10 +52,12 @@ const BattleArena = () => {
             row.map((tile, colIndex) => (
               <div
                 key={`you-${rowIndex}-${colIndex}`}
-                className={`tile ${tile.isRevealed ? "revealed" : ""} ${
-                  tile.shipId !== -1 ? "ship" : ""
-                }`}
-                onClick={() => console.log("Your grid clicked")}
+                className={`tile ${tile.isRevealed ? "revealed" : ""}  ${
+                  clickedTileP2?.row === rowIndex &&
+                  clickedTileP2?.col === colIndex
+                    ? "clicked"
+                    : ""
+                } ${tile.shipId !== -1 && tile.isRevealed ? "ship" : ""}`}
               />
             ))
           )}

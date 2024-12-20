@@ -156,7 +156,7 @@ const BattleshipController = () => {
         size: ship.size,
       }));
 
-      const gridData = grid.flatMap((row, rowIndex) =>
+      const gridData = grid.map((row, rowIndex) =>
         row.map((tile, colIndex) => ({
           row: rowIndex,
           col: colIndex,

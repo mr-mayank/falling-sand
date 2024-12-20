@@ -9,7 +9,12 @@ import {
 import { toast } from "react-toastify";
 import { useTheme } from "../../context/theme-context";
 import { ShipInterface } from "../../constants/interface";
-import { GRID_HEIGHT, GRID_WIDTH, shipsData } from "../../constants/constants";
+import {
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  TOTAL_SHIP_SIZE,
+  shipsData,
+} from "../../constants/constants";
 
 interface ShipInterfaceP2 {
   id: number;
@@ -27,6 +32,7 @@ interface Grid {
 const useBattleArenaController = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const { theme } = useTheme();
   const [playerOneShips, setPlayerOneShips] = useState<ShipInterface[]>(
     shipsData.map((ship) => ({
@@ -47,16 +53,276 @@ const useBattleArenaController = () => {
   );
   const [playerTwoShips, setPlayerTwoShips] = useState<ShipInterfaceP2[]>([]);
   const [playerTwoGrid, setPlayerTwoGrid] = useState<
-    Array<Array<{ isRevealed: boolean; shipId: any }>>
+    Array<
+      Array<{ isRevealed: boolean; shipId: number; row: number; col: number }>
+    >
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [clickedTileP1, setClickedTileP1] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+
+  const [clickedTileP2, setClickedTileP2] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
+
+  const [botShipClicked, setBotShipClicked] = useState<
+    {
+      row: number;
+      col: number;
+    }[]
+  >([]);
+
+  const [totalShipsRevealed, setTotalShipsRevealed] = useState({
+    playerOne: 0,
+    playerTwo: 0,
+  });
+
+  const handlePlayerOneGridClick = async (
+    rowIndex: number,
+    colIndex: number
+  ) => {
+    if (playerOneGrid[rowIndex][colIndex].isRevealed) return;
+
+    const keyBaseBot64 = localStorage.getItem("bot-key");
+
+    if (!keyBaseBot64) return;
+
+    setClickedTileP1({ row: rowIndex, col: colIndex });
+    setTimeout(() => setClickedTileP1(null), 600);
+
+    const newGrid = [...playerOneGrid];
+    newGrid[rowIndex][colIndex].isRevealed = true;
+
+    const exportedKeyBufferBot = Uint8Array.from(atob(keyBaseBot64), (c) =>
+      c.charCodeAt(0)
+    );
+
+    const key = await window.crypto.subtle.importKey(
+      "raw",
+      exportedKeyBufferBot,
+      {
+        name: "AES-GCM",
+        length: 256,
+      },
+      true,
+      ["encrypt", "decrypt"]
+    );
+
+    const encryptedGridDataBot = await encryptData(newGrid, key);
+
+    localStorage.setItem("bot-grid", encryptedGridDataBot);
+
+    setPlayerOneGrid(newGrid);
+    if (newGrid[rowIndex][colIndex].shipId !== -1) {
+      setTotalShipsRevealed((prev) => ({
+        ...prev,
+        playerOne: prev.playerOne + 1,
+      }));
+
+      if (totalShipsRevealed.playerOne + 1 === TOTAL_SHIP_SIZE) {
+        toast.success("YOU WON");
+        clearSaveData(id);
+        navigate("/battleship");
+      }
+    } else {
+      setTimeout(() => {
+        handlePlayerTwoGridClick();
+      }, 500);
+    }
+  };
+
+  const handlePlayerTwoGridClick = async (isRecursiveCall: boolean = false) => {
+    const keyBase64 = localStorage.getItem(`${id}-key`);
+
+    if (!keyBase64) return;
+    const newGrid = [...playerTwoGrid];
+    const isValidCoordinate = (row: number, col: number) => {
+      return row >= 0 && row < 7 && col >= 0 && col < 9;
+    };
+
+    const getUnrevealedAdjacentCells = (
+      row: number,
+      col: number,
+      grid: {
+        isRevealed: boolean;
+        shipId: number;
+        row: number;
+        col: number;
+      }[][]
+    ) => {
+      const adjacentCells = [
+        { row: row - 1, col }, // up
+        { row: row + 1, col }, // down
+        { row, col: col - 1 }, // left
+        { row, col: col + 1 }, // right
+      ];
+
+      return adjacentCells.filter(
+        (cell) =>
+          isValidCoordinate(cell.row, cell.col) &&
+          !grid[cell.row][cell.col].isRevealed
+      );
+    };
+
+    const getRandomUnrevealedCoordinates = (): { row: number; col: number } => {
+      let row: number, col: number;
+      do {
+        row = Math.floor(Math.random() * 7);
+        col = Math.floor(Math.random() * 9);
+      } while (playerTwoGrid[row][col].isRevealed);
+      return { row, col };
+    };
+    if (!isRecursiveCall && botShipClicked.length === 0) {
+      const { row, col } = getRandomUnrevealedCoordinates();
+      setClickedTileP2({ row, col });
+      setTimeout(() => setClickedTileP2(null), 600);
+
+      if (newGrid[row][col].isRevealed) {
+        setTimeout(() => {
+          handlePlayerTwoGridClick(false);
+        }, 600);
+        return;
+      }
+
+      newGrid[row][col].isRevealed = true;
+
+      const exportedKeyBuffer = Uint8Array.from(atob(keyBase64), (c) =>
+        c.charCodeAt(0)
+      );
+
+      const key = await window.crypto.subtle.importKey(
+        "raw",
+        exportedKeyBuffer,
+        {
+          name: "AES-GCM",
+          length: 256,
+        },
+        true,
+        ["encrypt", "decrypt"]
+      );
+
+      const encryptedGridDataBot = await encryptData(newGrid, key);
+
+      localStorage.setItem(`${id}-grid`, encryptedGridDataBot);
+      setPlayerTwoGrid(newGrid);
+
+      if (newGrid[row][col].shipId !== -1) {
+        setTotalShipsRevealed((prev) => ({
+          ...prev,
+          playerTwo: prev.playerTwo + 1,
+        }));
+
+        if (totalShipsRevealed.playerTwo + 1 === TOTAL_SHIP_SIZE) {
+          toast.success("YOU LOST");
+          clearSaveData(id);
+          navigate("/battleship");
+        } else {
+          const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
+
+          if (adjacentCells.length > 0) {
+            setBotShipClicked(adjacentCells);
+          }
+          setTimeout(() => {
+            handlePlayerTwoGridClick(true);
+          }, 500);
+        }
+      }
+      return;
+    } else {
+      if (botShipClicked.length > 0) {
+        const { row, col } = botShipClicked[0];
+
+        if (newGrid[row][col].isRevealed && botShipClicked.length > 1) {
+          setBotShipClicked(botShipClicked.slice(1));
+          setTimeout(() => {
+            handlePlayerTwoGridClick(true);
+          }, 500);
+          return;
+        }
+        setClickedTileP2({ row, col });
+        setTimeout(() => setClickedTileP2(null), 600);
+        newGrid[row][col].isRevealed = true;
+        const exportedKeyBuffer = Uint8Array.from(atob(keyBase64), (c) =>
+          c.charCodeAt(0)
+        );
+
+        const key = await window.crypto.subtle.importKey(
+          "raw",
+          exportedKeyBuffer,
+          {
+            name: "AES-GCM",
+            length: 256,
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+
+        const encryptedGridDataBot = await encryptData(newGrid, key);
+
+        localStorage.setItem(`${id}-grid`, encryptedGridDataBot);
+        setPlayerTwoGrid(newGrid);
+
+        if (newGrid[row][col].shipId !== -1) {
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
+            playerTwo: prev.playerTwo + 1,
+          }));
+
+          if (totalShipsRevealed.playerTwo + 1 === TOTAL_SHIP_SIZE) {
+            toast.success("YOU LOST");
+            clearSaveData(id);
+            navigate("/battleship");
+          } else {
+            const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
+
+            if (adjacentCells.length > 0) {
+              const newBotShipClicked = botShipClicked.slice(1);
+              setBotShipClicked([...newBotShipClicked, ...adjacentCells]);
+            } else {
+              setBotShipClicked(botShipClicked.slice(1));
+            }
+            setTimeout(() => {
+              handlePlayerTwoGridClick(true);
+            }, 500);
+          }
+        } else {
+          setBotShipClicked(botShipClicked.slice(1));
+          return;
+        }
+      } else {
+        setTimeout(() => {
+          handlePlayerTwoGridClick(false);
+        }, 500);
+        return;
+      }
+    }
+  };
+
+  const clearSaveData = (id: string | null | undefined) => {
+    localStorage.removeItem("game-id");
+    localStorage.removeItem(`${id}-key`);
+    localStorage.removeItem(`${id}-ships`);
+    localStorage.removeItem(`${id}-grid`);
+    localStorage.removeItem("bot-key");
+    localStorage.removeItem("bot-ships");
+    localStorage.removeItem("bot-grid");
+  };
 
   const loadSavedGame = useCallback(async () => {
     try {
+      const gameId = localStorage.getItem("game-id");
+      if (!gameId && gameId !== id) {
+        toast.error("No saved game found");
+        clearSaveData(gameId);
+        navigate("/battleship");
+        return;
+      }
       const exportedKeyBase64 = localStorage.getItem(`${id}-key`);
       const encryptedShipsData = localStorage.getItem(`${id}-ships`);
       const encryptedGridData = localStorage.getItem(`${id}-grid`);
-      const gameId = localStorage.getItem("game-id");
 
       const keyBaseBot64 = localStorage.getItem("bot-key");
       const encryptedShipsDataBot = localStorage.getItem("bot-ships");
@@ -69,13 +335,7 @@ const useBattleArenaController = () => {
         !gameId
       ) {
         toast.error("No saved game found");
-        localStorage.removeItem(`${id}-key`);
-        localStorage.removeItem(`${id}-ships`);
-        localStorage.removeItem(`${id}-grid`);
-        localStorage.removeItem("bot-key");
-        localStorage.removeItem("bot-ships");
-        localStorage.removeItem("bot-grid");
-        localStorage.removeItem("game-id");
+        clearSaveData(gameId);
         navigate("/battleship");
         return;
       }
@@ -109,13 +369,7 @@ const useBattleArenaController = () => {
       } else {
         if (!keyBaseBot64 || !encryptedShipsDataBot || !encryptedGridDataBot) {
           toast.error("BOT data altered!!");
-          localStorage.removeItem(`${id}-key`);
-          localStorage.removeItem(`${id}-ships`);
-          localStorage.removeItem(`${id}-grid`);
-          localStorage.removeItem("bot-key");
-          localStorage.removeItem("bot-ships");
-          localStorage.removeItem("bot-grid");
-          localStorage.removeItem("game-id");
+          clearSaveData(gameId);
           navigate("/battleship");
           return;
         } else {
@@ -167,33 +421,8 @@ const useBattleArenaController = () => {
       const decryptedGridData = await decryptData(encryptedGridData, key);
 
       setPlayerTwoShips(decryptedShipsData);
-      setPlayerTwoGrid(
-        decryptedGridData.reduce(
-          (
-            acc: Array<Array<{ isRevealed: boolean; shipId: any }>>,
-            tile: {
-              row: number;
-              col: number;
-              shipId: number;
-              isRevealed: boolean;
-            }
-          ) => {
-            if (!acc[tile.row]) {
-              acc[tile.row] = [];
-            }
-
-            acc[tile.row][tile.col] = {
-              isRevealed: tile.isRevealed,
-              shipId: tile.shipId,
-            };
-
-            return acc;
-          },
-          Array(7)
-            .fill(null)
-            .map(() => [])
-        )
-      );
+      console.log(decryptedGridData);
+      setPlayerTwoGrid(decryptedGridData);
       setTimeout(() => {
         setIsLoading(false);
       }, 1500);
@@ -210,13 +439,7 @@ const useBattleArenaController = () => {
           autoClose: 2000,
         });
       }
-      localStorage.removeItem(`${id}-key`);
-      localStorage.removeItem(`${id}-ships`);
-      localStorage.removeItem(`${id}-grid`);
-      localStorage.removeItem("bot-key");
-      localStorage.removeItem("bot-ships");
-      localStorage.removeItem("bot-grid");
-      localStorage.removeItem("game-id");
+      clearSaveData(id);
       console.error("Error loading game:", error);
       navigate("/battleship");
     }
@@ -233,6 +456,9 @@ const useBattleArenaController = () => {
     playerOneGrid,
     isLoading,
     playerTwoShips,
+    clickedTileP1,
+    clickedTileP2,
+    handlePlayerOneGridClick,
   };
 };
 
