@@ -111,6 +111,16 @@
     background: inherit;
 }
 
+.tile.revealed.theme-dark-revealed {
+  background: #0f0f0f;
+  cursor: not-allowed;
+}
+
+.tile.revealed.theme-light-revealed {
+  background: #efefef;
+  cursor: not-allowed;
+}
+
 .tile:hover {
     transform: scale(1.05);
     cursor: pointer;
@@ -155,11 +165,10 @@
 }
 
 .octa {
-    aspect-ratio: 1;
-    --o: calc(50% * tan(-22.5deg));
-    clip-path: polygon(var(--o) 50%, 50% var(--o), calc(100% - var(--o)) 50%, 50% calc(100% - var(--o)));
-    background: var(--ship-bg-light);
-    border-radius: 25%;
+  aspect-ratio: 1;
+  --o: calc(50% * tan(-22.5deg));
+  background: var(--ship-bg-light);
+  border-radius: 25%;
 }
 
 .theme-dark .octa {
