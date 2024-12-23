@@ -68,7 +68,7 @@ const useBattleArenaController = () => {
     col: number;
   } | null>(null);
 
-  const [botShipClicked, setBotShipClicked] = useState<
+  let [botShipClicked, setBotShipClicked] = useState<
     {
       row: number;
       col: number;
@@ -134,170 +134,158 @@ const useBattleArenaController = () => {
     }
   };
 
-  const handlePlayerTwoGridClick = async (isRecursiveCall: boolean = false) => {
+  const isValidCoordinate = (row: number, col: number) => {
+    return row >= 0 && row < 7 && col >= 0 && col < 9;
+  };
+
+  const getUnrevealedAdjacentCells = (
+    row: number,
+    col: number,
+    grid: {
+      isRevealed: boolean;
+      shipId: number;
+      row: number;
+      col: number;
+    }[][],
+    adjcentTiles: {
+      row: number;
+      col: number;
+    }[]
+  ) => {
+    const adjacentCells = [
+      { row: row - 1, col }, // up
+      { row: row + 1, col }, // down
+      { row, col: col - 1 }, // left
+      { row, col: col + 1 }, // right
+    ];
+
+    return adjacentCells.filter(
+      (cell) =>
+        isValidCoordinate(cell.row, cell.col) &&
+        !grid[cell.row][cell.col].isRevealed &&
+        !adjcentTiles.some(
+          (tile) => tile.row === cell.row && tile.col === cell.col
+        )
+    );
+  };
+
+  const savePlayerTwoData = async (keyBase64: string, newGrid: any) => {
+    const exportedKeyBuffer = Uint8Array.from(atob(keyBase64), (c) =>
+      c.charCodeAt(0)
+    );
+
+    const key = await window.crypto.subtle.importKey(
+      "raw",
+      exportedKeyBuffer,
+      {
+        name: "AES-GCM",
+        length: 256,
+      },
+      true,
+      ["encrypt", "decrypt"]
+    );
+
+    const encryptedGridDataBot = await encryptData(newGrid, key);
+
+    localStorage.setItem(`${id}-grid`, encryptedGridDataBot);
+  };
+
+  const getRandomUnrevealedCoordinates = (): { row: number; col: number } => {
+    let row: number, col: number;
+    do {
+      row = Math.floor(Math.random() * 7);
+      col = Math.floor(Math.random() * 9);
+    } while (playerTwoGrid[row][col].isRevealed);
+    return { row, col };
+  };
+
+  const handlePlayerTwoGridClick = async () => {
     const keyBase64 = localStorage.getItem(`${id}-key`);
-
     if (!keyBase64) return;
+
     const newGrid = [...playerTwoGrid];
-    const isValidCoordinate = (row: number, col: number) => {
-      return row >= 0 && row < 7 && col >= 0 && col < 9;
-    };
-
-    const getUnrevealedAdjacentCells = (
-      row: number,
-      col: number,
-      grid: {
-        isRevealed: boolean;
-        shipId: number;
-        row: number;
-        col: number;
-      }[][]
-    ) => {
-      const adjacentCells = [
-        { row: row - 1, col }, // up
-        { row: row + 1, col }, // down
-        { row, col: col - 1 }, // left
-        { row, col: col + 1 }, // right
-      ];
-
-      return adjacentCells.filter(
-        (cell) =>
-          isValidCoordinate(cell.row, cell.col) &&
-          !grid[cell.row][cell.col].isRevealed
-      );
-    };
-
-    const getRandomUnrevealedCoordinates = (): { row: number; col: number } => {
-      let row: number, col: number;
-      do {
-        row = Math.floor(Math.random() * 7);
-        col = Math.floor(Math.random() * 9);
-      } while (playerTwoGrid[row][col].isRevealed);
-      return { row, col };
-    };
-    if (!isRecursiveCall && botShipClicked.length === 0) {
+    const adjcentTiles = [...botShipClicked];
+    if (adjcentTiles.length === 0) {
       const { row, col } = getRandomUnrevealedCoordinates();
+      newGrid[row][col].isRevealed = true;
+      savePlayerTwoData(keyBase64, newGrid);
+      setPlayerTwoGrid(newGrid);
       setClickedTileP2({ row, col });
       setTimeout(() => setClickedTileP2(null), 600);
 
-      if (newGrid[row][col].isRevealed) {
-        setTimeout(() => {
-          handlePlayerTwoGridClick(false);
-        }, 600);
-        return;
-      }
-
-      newGrid[row][col].isRevealed = true;
-
-      const exportedKeyBuffer = Uint8Array.from(atob(keyBase64), (c) =>
-        c.charCodeAt(0)
-      );
-
-      const key = await window.crypto.subtle.importKey(
-        "raw",
-        exportedKeyBuffer,
-        {
-          name: "AES-GCM",
-          length: 256,
-        },
-        true,
-        ["encrypt", "decrypt"]
-      );
-
-      const encryptedGridDataBot = await encryptData(newGrid, key);
-
-      localStorage.setItem(`${id}-grid`, encryptedGridDataBot);
-      setPlayerTwoGrid(newGrid);
-
       if (newGrid[row][col].shipId !== -1) {
-        setTotalShipsRevealed((prev) => ({
-          ...prev,
-          playerTwo: prev.playerTwo + 1,
-        }));
-
         if (totalShipsRevealed.playerTwo + 1 === TOTAL_SHIP_SIZE) {
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
+            playerTwo: prev.playerTwo + 1,
+          }));
           toast.success("YOU LOST");
           clearSaveData(id);
           navigate("/battleship");
+          return;
         } else {
-          const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
-
-          if (adjacentCells.length > 0) {
-            setBotShipClicked(adjacentCells);
-          }
+          const adjacentCells = getUnrevealedAdjacentCells(
+            row,
+            col,
+            newGrid,
+            adjcentTiles
+          );
+          botShipClicked = [...botShipClicked, ...adjacentCells];
+          setBotShipClicked(botShipClicked);
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
+            playerTwo: prev.playerTwo + 1,
+          }));
           setTimeout(() => {
-            handlePlayerTwoGridClick(true);
-          }, 500);
+            handlePlayerTwoGridClick();
+          }, 600);
         }
       }
       return;
     } else {
-      if (botShipClicked.length > 0) {
-        const { row, col } = botShipClicked[0];
-
-        if (newGrid[row][col].isRevealed && botShipClicked.length > 1) {
-          setBotShipClicked(botShipClicked.slice(1));
-          setTimeout(() => {
-            handlePlayerTwoGridClick(true);
-          }, 500);
+      const { row, col } = adjcentTiles[0];
+      newGrid[row][col].isRevealed = true;
+      savePlayerTwoData(keyBase64, newGrid);
+      const newAdjecent = adjcentTiles.filter(
+        (item) => item.row !== row && item.col !== col
+      );
+      if (newGrid[row][col].shipId !== -1) {
+        if (totalShipsRevealed.playerTwo + 1 === TOTAL_SHIP_SIZE) {
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
+            playerTwo: prev.playerTwo + 1,
+          }));
+          toast.success("YOU LOST");
+          clearSaveData(id);
+          navigate("/battleship");
           return;
-        }
-        setClickedTileP2({ row, col });
-        setTimeout(() => setClickedTileP2(null), 600);
-        newGrid[row][col].isRevealed = true;
-        const exportedKeyBuffer = Uint8Array.from(atob(keyBase64), (c) =>
-          c.charCodeAt(0)
-        );
+        } else {
+          const adjacentCells = getUnrevealedAdjacentCells(
+            row,
+            col,
+            newGrid,
+            newAdjecent
+          );
 
-        const key = await window.crypto.subtle.importKey(
-          "raw",
-          exportedKeyBuffer,
-          {
-            name: "AES-GCM",
-            length: 256,
-          },
-          true,
-          ["encrypt", "decrypt"]
-        );
-
-        const encryptedGridDataBot = await encryptData(newGrid, key);
-
-        localStorage.setItem(`${id}-grid`, encryptedGridDataBot);
-        setPlayerTwoGrid(newGrid);
-
-        if (newGrid[row][col].shipId !== -1) {
+          botShipClicked = [...newAdjecent, ...adjacentCells];
+          setBotShipClicked(botShipClicked);
           setTotalShipsRevealed((prev) => ({
             ...prev,
             playerTwo: prev.playerTwo + 1,
           }));
 
-          if (totalShipsRevealed.playerTwo + 1 === TOTAL_SHIP_SIZE) {
-            toast.success("YOU LOST");
-            clearSaveData(id);
-            navigate("/battleship");
-          } else {
-            const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
-
-            if (adjacentCells.length > 0) {
-              const newBotShipClicked = botShipClicked.slice(1);
-              setBotShipClicked([...newBotShipClicked, ...adjacentCells]);
-            } else {
-              setBotShipClicked(botShipClicked.slice(1));
-            }
-            setTimeout(() => {
-              handlePlayerTwoGridClick(true);
-            }, 500);
-          }
-        } else {
-          setBotShipClicked(botShipClicked.slice(1));
-          return;
+          setTimeout(() => {
+            handlePlayerTwoGridClick();
+          }, 600);
         }
       } else {
-        setTimeout(() => {
-          handlePlayerTwoGridClick(false);
-        }, 500);
-        return;
+        botShipClicked = newAdjecent;
+        setBotShipClicked(botShipClicked);
       }
+
+      setPlayerTwoGrid(newGrid);
+      setClickedTileP2({ row, col });
+      setTimeout(() => setClickedTileP2(null), 600);
     }
   };
 
@@ -421,7 +409,6 @@ const useBattleArenaController = () => {
       const decryptedGridData = await decryptData(encryptedGridData, key);
 
       setPlayerTwoShips(decryptedShipsData);
-      console.log(decryptedGridData);
       setPlayerTwoGrid(decryptedGridData);
       setTimeout(() => {
         setIsLoading(false);

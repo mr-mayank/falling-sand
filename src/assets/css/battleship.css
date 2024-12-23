@@ -107,10 +107,15 @@
     display: none;
 }
 
+.tile.revealed {
+    background: inherit;
+}
+
 .tile:hover {
     transform: scale(1.05);
     cursor: pointer;
 }
+
 
 /* Splash effect */
 .tile::after {
@@ -167,7 +172,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
 }
+
+.ship .ship-revealed {
+    background: inherit;
+    border-radius: 25%;
+    border: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .theme-dark .ship {
     background: var(--ship-bg-dark);

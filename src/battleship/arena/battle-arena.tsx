@@ -37,7 +37,11 @@ const BattleArena = () => {
                   clickedTileP1?.col === colIndex
                     ? "clicked"
                     : ""
-                }  ${tile.shipId !== -1 && tile.isRevealed ? "ship" : ""}`}
+                }  ${
+                  tile.shipId !== -1 && tile.isRevealed
+                    ? "ship ship-revealed"
+                    : ""
+                }`}
                 onClick={() => handlePlayerOneGridClick(rowIndex, colIndex)}
               />
             ))
