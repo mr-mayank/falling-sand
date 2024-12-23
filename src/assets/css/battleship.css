@@ -210,6 +210,10 @@ button:hover {
     background-color: transparent;
 }
 
+.delete-btn:hover {
+  color: #000;
+}
+
 .main-btn {
     background-color: var(--button-bg-light);
     color: white;
