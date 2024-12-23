@@ -32,7 +32,13 @@ const BattleArena = () => {
                 key={`bot-${rowIndex}-${colIndex}`}
                 className={`tile ${
                   tile.isRevealed && tile.shipId === -1 ? "revealed" : ""
-                } ${
+                }
+                ${
+                  theme === "dark"
+                    ? "theme-dark-revealed"
+                    : "theme-light-revealed"
+                }
+                ${
                   clickedTileP1?.row === rowIndex &&
                   clickedTileP1?.col === colIndex
                     ? "clicked"
@@ -56,12 +62,24 @@ const BattleArena = () => {
             row.map((tile, colIndex) => (
               <div
                 key={`you-${rowIndex}-${colIndex}`}
-                className={`tile ${tile.isRevealed ? "revealed" : ""}  ${
+                className={`tile ${
+                  tile.isRevealed && tile.shipId === -1 ? "revealed" : ""
+                }
+                ${
+                  theme === "dark"
+                    ? "theme-dark-revealed"
+                    : "theme-light-revealed"
+                }
+                ${
                   clickedTileP2?.row === rowIndex &&
                   clickedTileP2?.col === colIndex
                     ? "clicked"
                     : ""
-                } ${tile.shipId !== -1 && tile.isRevealed ? "ship" : ""}`}
+                }  ${
+                  tile.shipId !== -1 && tile.isRevealed
+                    ? "ship ship-revealed"
+                    : ""
+                }`}
               />
             ))
           )}
