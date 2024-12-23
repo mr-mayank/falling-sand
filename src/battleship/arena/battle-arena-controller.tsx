@@ -68,6 +68,8 @@ const useBattleArenaController = () => {
     col: number;
   } | null>(null);
 
+  const [canPlay, setCanPlay] = useState(true);
+
   let [botShipClicked, setBotShipClicked] = useState<
     {
       row: number;
@@ -80,10 +82,18 @@ const useBattleArenaController = () => {
     playerTwo: 0,
   });
 
+  console.log(playerOneGrid);
+
   const handlePlayerOneGridClick = async (
     rowIndex: number,
     colIndex: number
   ) => {
+    if (!canPlay) {
+      toast.error("Its not your turn", {
+        autoClose: 100,
+      });
+      return;
+    }
     if (playerOneGrid[rowIndex][colIndex].isRevealed) return;
 
     const keyBaseBot64 = localStorage.getItem("bot-key");
@@ -121,16 +131,20 @@ const useBattleArenaController = () => {
         ...prev,
         playerOne: prev.playerOne + 1,
       }));
-
-      if (totalShipsRevealed.playerOne + 1 === TOTAL_SHIP_SIZE) {
-        toast.success("YOU WON");
-        clearSaveData(id);
-        navigate("/battleship");
-      }
     } else {
+      setCanPlay(false);
       setTimeout(() => {
         handlePlayerTwoGridClick();
       }, 500);
+    }
+  };
+
+  const endGameRedirection = (type: "home" | "new") => {
+    clearSaveData(id);
+    if (type === "home") {
+      navigate("/");
+    } else {
+      navigate(`/battleship/create`);
     }
   };
 
@@ -219,10 +233,6 @@ const useBattleArenaController = () => {
             ...prev,
             playerTwo: prev.playerTwo + 1,
           }));
-          toast.success("YOU LOST");
-          clearSaveData(id);
-          navigate("/battleship");
-          return;
         } else {
           const adjacentCells = getUnrevealedAdjacentCells(
             row,
@@ -240,6 +250,8 @@ const useBattleArenaController = () => {
             handlePlayerTwoGridClick();
           }, 600);
         }
+      } else {
+        setCanPlay(true);
       }
       return;
     } else {
@@ -255,10 +267,6 @@ const useBattleArenaController = () => {
             ...prev,
             playerTwo: prev.playerTwo + 1,
           }));
-          toast.success("YOU LOST");
-          clearSaveData(id);
-          navigate("/battleship");
-          return;
         } else {
           const adjacentCells = getUnrevealedAdjacentCells(
             row,
@@ -281,6 +289,7 @@ const useBattleArenaController = () => {
       } else {
         botShipClicked = newAdjecent;
         setBotShipClicked(botShipClicked);
+        setCanPlay(true);
       }
 
       setPlayerTwoGrid(newGrid);
@@ -386,8 +395,22 @@ const useBattleArenaController = () => {
             key
           );
 
+          let shipRevealed = 0;
+
+          for (let i = 0; decryptedGridData.length > i; i++) {
+            shipRevealed += decryptedGridData[i].filter(
+              (ship: { isRevealed: boolean; shipId: number }) =>
+                ship.isRevealed && ship.shipId !== -1
+            ).length;
+          }
+
           setPlayerOneShips(decryptedShipsData);
           setPlayerOneGrid(decryptedGridData);
+
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
+            playerOne: shipRevealed,
+          }));
         }
       }
 
@@ -408,8 +431,22 @@ const useBattleArenaController = () => {
       const decryptedShipsData = await decryptData(encryptedShipsData, key);
       const decryptedGridData = await decryptData(encryptedGridData, key);
 
+      let shipRevealed = 0;
+
+      for (let i = 0; decryptedGridData.length > i; i++) {
+        shipRevealed += decryptedGridData[i].filter(
+          (ship: { isRevealed: boolean; shipId: number }) =>
+            ship.isRevealed && ship.shipId !== -1
+        ).length;
+      }
+
       setPlayerTwoShips(decryptedShipsData);
       setPlayerTwoGrid(decryptedGridData);
+      setTotalShipsRevealed((prev) => ({
+        ...prev,
+        playerTwo: shipRevealed,
+      }));
+
       setTimeout(() => {
         setIsLoading(false);
       }, 1500);
@@ -445,7 +482,10 @@ const useBattleArenaController = () => {
     playerTwoShips,
     clickedTileP1,
     clickedTileP2,
+    canPlay,
+    totalShipsRevealed,
     handlePlayerOneGridClick,
+    endGameRedirection,
   };
 };
 
