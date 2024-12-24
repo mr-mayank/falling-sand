@@ -112,13 +112,13 @@
 }
 
 .tile.revealed.theme-dark-revealed {
-  background: #0f0f0f;
-  cursor: not-allowed;
+    background: #0f0f0f;
+    cursor: not-allowed;
 }
 
 .tile.revealed.theme-light-revealed {
-  background: #efefef;
-  cursor: not-allowed;
+    background: #efefef;
+    cursor: not-allowed;
 }
 
 .tile:hover {
@@ -165,10 +165,10 @@
 }
 
 .octa {
-  aspect-ratio: 1;
-  --o: calc(50% * tan(-22.5deg));
-  background: var(--ship-bg-light);
-  border-radius: 25%;
+    aspect-ratio: 1;
+    --o: calc(50% * tan(-22.5deg));
+    background: var(--ship-bg-light);
+    border-radius: 25%;
 }
 
 .theme-dark .octa {
