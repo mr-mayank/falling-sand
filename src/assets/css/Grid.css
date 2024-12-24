@@ -51,7 +51,7 @@
 
 .grid-container {
     display: grid;
-    gap: 1px;
+    gap: 0px;
     /* background-color: #ccc; */
     border: 2px solid black;
     cursor: none;

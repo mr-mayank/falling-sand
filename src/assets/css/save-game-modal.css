@@ -1,0 +1,134 @@
+/* GamePrompt.css */
+.prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.prompt-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+    .prompt-container {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+}
+
+.prompt-content {
+    text-align: center;
+}
+
+.prompt-content h2 {
+    margin: 0 0 16px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.prompt-content p {
+    margin: 0 0 24px 0;
+    color: #666666;
+    line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+    .prompt-content h2 {
+        color: #ffffff;
+    }
+
+    .prompt-content p {
+        color: #a0a0a0;
+    }
+}
+
+.prompt-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+@media (prefers-color-scheme: dark) {
+    .btn-primary {
+        background-color: #60a5fa;
+    }
+
+    .btn-primary:hover {
+        background-color: #3b82f6;
+    }
+
+    .btn-secondary {
+        background-color: #374151;
+        color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

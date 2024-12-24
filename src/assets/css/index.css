@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
+
+:root {
+  /* Dark Theme Variables */
+  --bg-primary-dark: #0a0a1a;
+  --bg-secondary-dark: rgba(255, 255, 255, 0.1);
+  --text-primary-dark: #ffffff;
+  --border-color-dark: rgba(255, 255, 255, 0.2);
+
+  /* Light Theme Variables */
+  --bg-primary-light: #f0f4f8;
+  --bg-secondary-light: rgba(0, 0, 0, 0.05);
+  --text-primary-light: #1a365d;
+  --border-color-light: rgba(0, 0, 0, 0.1);
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Theme Defaults */
+body {
+  background-color: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
+}
+
+/* Theme-specific styles */
+.theme-dark {
+  background-color: var(--bg-primary-dark);
+  color: var(--text-primary-dark);
+}
+
+.theme-light {
+  background-color: var(--bg-primary-light);
+  color: var(--text-primary-light);
+}
+
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  opacity: 0.5;
+}
+
+.theme-dark .animated-background .floating-element {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-light .animated-background .floating-element {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.floating-element {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  animation: float linear infinite;
+}
+
+/* Previous animations remain the same */
+
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  color: inherit;
+}
+
+.content {
+  text-align: center;
+  z-index: 10;
+  padding: 2rem;
+}
+
+.glitch {
+  font-size: 4rem;
+  font-weight: bold;
+  position: relative;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 red;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 blue;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(61px, 9999px, 52px, 0);
+    transform: skew(0.87deg);
+  }
+
+  5% {
+    clip: rect(33px, 9999px, 14px, 0);
+    transform: skew(0.02deg);
+  }
+
+  10% {
+    clip: rect(85px, 9999px, 66px, 0);
+    transform: skew(0.56deg);
+  }
+
+  15% {
+    clip: rect(16px, 9999px, 53px, 0);
+    transform: skew(0.01deg);
+  }
+
+  20% {
+    clip: rect(89px, 9999px, 80px, 0);
+    transform: skew(0.77deg);
+  }
+
+  25% {
+    clip: rect(4px, 9999px, 38px, 0);
+    transform: skew(0.13deg);
+  }
+}
+
+@keyframes glitch-anim2 {
+  0% {
+    clip: rect(29px, 9999px, 61px, 0);
+    transform: skew(0.37deg);
+  }
+
+  5% {
+    clip: rect(2px, 9999px, 29px, 0);
+    transform: skew(0.91deg);
+  }
+
+  10% {
+    clip: rect(62px, 9999px, 67px, 0);
+    transform: skew(0.85deg);
+  }
+}
+
+.theme-dark .glitch {
+  color: var(--text-primary-dark);
+}
+
+.theme-light .glitch {
+  color: var(--text-primary-light);
+}
+
+.game-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.game-link {
+  text-decoration: none;
+  color: inherit;
+  perspective: 1000px;
+}
+
+.game-card {
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-color-dark);
+  padding: 2rem;
+  border-radius: 15px;
+  width: 250px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+}
+
+.theme-light .game-card {
+  background: var(--bg-secondary-light);
+  border: 1px solid var(--border-color-light);
+  color: var(--text-primary-light);
+}
+
+.game-card:hover {
+  transform: scale(1.05) rotateX(10deg) rotateY(10deg);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.home-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--bg-secondary-dark);
+  border: 1px solid var(--border-color-dark);
+  color: inherit;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 100;
+}
+
+.theme-light .home-button {
+  background: var(--bg-secondary-light);
+  border: 1px solid black;
+}
+
+.home-button:hover {
+  transform: scale(1.1);
+  color: inherit;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .game-links {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Overall page styling */
+.battle-home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: inherit;
+  color: inherit;
+  font-family: "Arial", sans-serif;
+  text-align: center;
+}
+
+/* Title styling */
+.battle-title {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Description styling */
+.battle-description {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+/* Buttons container */
+.buttons-container {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Button styling */
+.battle-home-button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: inherit;
+  background: inherit;
+  border: 2px solid var(--border-color-light);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.theme-dark .battle-home-button {
+  background-color: var(--bg-secondary-dark);
+}
+
+
+/* Hover effect for buttons */
+.battle-home-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: inherit;
+  transform: scale(1.1);
+}
+
+/* Button-specific animations */
+.play-vs-bot {
+  animation: float 2s infinite ease-in-out;
+}
+
+.play-vs-friend {
+  animation: float 2s infinite ease-in-out 0.5s;
+}
+
+/* Float animation */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}

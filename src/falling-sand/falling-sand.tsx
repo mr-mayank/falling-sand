@@ -1,7 +1,8 @@
+//@ts-nocheck
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import "./Grid.css";
+import "../assets/css/Grid.css";
 
-const Grid = () => {
+const FallingSand = () => {
   const gridSize = 40;
   const containerSize = 400;
   const cellSize = containerSize / gridSize;
@@ -191,4 +192,4 @@ const Grid = () => {
   );
 };
 
-export default Grid;
+export default FallingSand;
