@@ -160,11 +160,7 @@ const useBattleArenaController = () => {
       shipId: number;
       row: number;
       col: number;
-    }[][],
-    adjcentTiles: {
-      row: number;
-      col: number;
-    }[]
+    }[][]
   ) => {
     const adjacentCells = [
       { row: row - 1, col }, // up
@@ -176,10 +172,7 @@ const useBattleArenaController = () => {
     return adjacentCells.filter(
       (cell) =>
         isValidCoordinate(cell.row, cell.col) &&
-        !grid[cell.row][cell.col].isRevealed &&
-        !adjcentTiles.some(
-          (tile) => tile.row === cell.row && tile.col === cell.col
-        )
+        !grid[cell.row][cell.col].isRevealed
     );
   };
 
@@ -234,12 +227,7 @@ const useBattleArenaController = () => {
             playerTwo: prev.playerTwo + 1,
           }));
         } else {
-          const adjacentCells = getUnrevealedAdjacentCells(
-            row,
-            col,
-            newGrid,
-            adjcentTiles
-          );
+          const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
           botShipClicked = [...botShipClicked, ...adjacentCells];
           setBotShipClicked(botShipClicked);
           setTotalShipsRevealed((prev) => ({
@@ -268,12 +256,7 @@ const useBattleArenaController = () => {
             playerTwo: prev.playerTwo + 1,
           }));
         } else {
-          const adjacentCells = getUnrevealedAdjacentCells(
-            row,
-            col,
-            newGrid,
-            newAdjecent
-          );
+          const adjacentCells = getUnrevealedAdjacentCells(row, col, newGrid);
 
           botShipClicked = [...newAdjecent, ...adjacentCells];
           setBotShipClicked(botShipClicked);
