@@ -109,7 +109,7 @@ const App = () => {
   const memories = {
     "Our First Date": {
       description:
-        "That magical evening when we first met. 🌟 The nervousness, the excitement, and the beginning of our beautiful journey together. 💕 And the first day in Sarita—we never imagined we would become a regular couple who goes to Sarita every weekend. 🥰 Our First Kiss 💋, First Hug 🤗, and the excitement after our first kiss—that feeling we will never forget. ✨",
+        "That magical day actually it is second but that is the day when we first met. 🌟 The nervousness, the excitement, and the beginning of our beautiful journey together. 💕 And the first day in Sarita—we never imagined we would become a regular couple who goes to Sarita every weekend. 🥰 Our First Kiss 💋, First Hug 🤗, and the excitement after our first kiss—that feeling we will never forget. ✨",
       image: "first",
     },
     "Favorite Memory": {
