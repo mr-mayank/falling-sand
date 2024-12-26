@@ -1,343 +1,290 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap');
-
-:root {
-  /* Dark Theme Variables */
-  --bg-primary-dark: #0a0a1a;
-  --bg-secondary-dark: rgba(255, 255, 255, 0.1);
-  --text-primary-dark: #ffffff;
-  --border-color-dark: rgba(255, 255, 255, 0.2);
-
-  /* Light Theme Variables */
-  --bg-primary-light: #f0f4f8;
-  --bg-secondary-light: rgba(0, 0, 0, 0.05);
-  --text-primary-light: #1a365d;
-  --border-color-light: rgba(0, 0, 0, 0.1);
-}
-
-body,
-html {
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  transition: background-color 0.3s, color 0.3s;
+  box-sizing: border-box;
 }
 
-/* Dark Theme Defaults */
-body {
-  background-color: var(--bg-primary-dark);
-  color: var(--text-primary-dark);
-}
-
-/* Theme-specific styles */
-.theme-dark {
-  background-color: var(--bg-primary-dark);
-  color: var(--text-primary-dark);
-}
-
-.theme-light {
-  background-color: var(--bg-primary-light);
-  color: var(--text-primary-light);
-}
-
-.animated-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  overflow: hidden;
-  opacity: 0.5;
-}
-
-.theme-dark .animated-background .floating-element {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.theme-light .animated-background .floating-element {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.floating-element {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  animation: float linear infinite;
-}
-
-/* Previous animations remain the same */
-
-.home-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.app {
   min-height: 100vh;
-  position: relative;
+  background: #02071b;
+  overflow-x: hidden;
+  font-family: 'Arial', sans-serif;
 }
 
-.theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: transparent;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  z-index: 100;
-}
-
-.theme-toggle:hover {
-  transform: scale(1.1);
-  color: inherit;
-}
-
-.content {
-  text-align: center;
-  z-index: 10;
-  padding: 2rem;
-}
-
-.glitch {
-  font-size: 4rem;
-  font-weight: bold;
-  position: relative;
-  text-transform: uppercase;
-  color: #ffffff;
-}
-
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.glitch::before {
-  left: 2px;
-  text-shadow: -2px 0 red;
-  clip: rect(44px, 450px, 56px, 0);
-  animation: glitch-anim 5s infinite linear alternate-reverse;
-}
-
-.glitch::after {
-  left: -2px;
-  text-shadow: -2px 0 blue;
-  clip: rect(44px, 450px, 56px, 0);
-  animation: glitch-anim2 5s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-anim {
+@keyframes textShine {
   0% {
-    clip: rect(61px, 9999px, 52px, 0);
-    transform: skew(0.87deg);
+    background-position: 0% 50%;
   }
 
-  5% {
-    clip: rect(33px, 9999px, 14px, 0);
-    transform: skew(0.02deg);
-  }
-
-  10% {
-    clip: rect(85px, 9999px, 66px, 0);
-    transform: skew(0.56deg);
-  }
-
-  15% {
-    clip: rect(16px, 9999px, 53px, 0);
-    transform: skew(0.01deg);
-  }
-
-  20% {
-    clip: rect(89px, 9999px, 80px, 0);
-    transform: skew(0.77deg);
-  }
-
-  25% {
-    clip: rect(4px, 9999px, 38px, 0);
-    transform: skew(0.13deg);
+  100% {
+    background-position: 100% 50%;
   }
 }
 
-@keyframes glitch-anim2 {
-  0% {
-    clip: rect(29px, 9999px, 61px, 0);
-    transform: skew(0.37deg);
-  }
-
-  5% {
-    clip: rect(2px, 9999px, 29px, 0);
-    transform: skew(0.91deg);
-  }
-
-  10% {
-    clip: rect(62px, 9999px, 67px, 0);
-    transform: skew(0.85deg);
-  }
-}
-
-.theme-dark .glitch {
-  color: var(--text-primary-dark);
-}
-
-.theme-light .glitch {
-  color: var(--text-primary-light);
-}
-
-.game-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-top: 3rem;
-}
-
-.game-link {
-  text-decoration: none;
-  color: inherit;
-  perspective: 1000px;
-}
-
-.game-card {
-  background: var(--bg-secondary-dark);
-  border: 1px solid var(--border-color-dark);
-  padding: 2rem;
-  border-radius: 15px;
-  width: 250px;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  transform-style: preserve-3d;
-}
-
-.theme-light .game-card {
-  background: var(--bg-secondary-light);
-  border: 1px solid var(--border-color-light);
-  color: var(--text-primary-light);
-}
-
-.game-card:hover {
-  transform: scale(1.05) rotateX(10deg) rotateY(10deg);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-.home-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: var(--bg-secondary-dark);
-  border: 1px solid var(--border-color-dark);
-  color: inherit;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  z-index: 100;
-}
-
-.theme-light .home-button {
-  background: var(--bg-secondary-light);
-  border: 1px solid black;
-}
-
-.home-button:hover {
-  transform: scale(1.1);
-  color: inherit;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .game-links {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* Overall page styling */
-.battle-home-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: inherit;
-  color: inherit;
-  font-family: "Arial", sans-serif;
-  text-align: center;
-}
-
-/* Title styling */
-.battle-title {
-  font-size: 3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Description styling */
-.battle-description {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  max-width: 600px;
-  line-height: 1.6;
-}
-
-/* Buttons container */
-.buttons-container {
-  display: flex;
-  gap: 1rem;
-}
-
-/* Button styling */
-.battle-home-button {
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-  color: inherit;
-  background: inherit;
-  border: 2px solid var(--border-color-light);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.theme-dark .battle-home-button {
-  background-color: var(--bg-secondary-dark);
-}
-
-
-/* Hover effect for buttons */
-.battle-home-button:hover {
-  background: rgba(255, 255, 255, 0.4);
-  color: inherit;
-  transform: scale(1.1);
-}
-
-/* Button-specific animations */
-.play-vs-bot {
-  animation: float 2s infinite ease-in-out;
-}
-
-.play-vs-friend {
-  animation: float 2s infinite ease-in-out 0.5s;
-}
-
-/* Float animation */
-@keyframes float {
+@keyframes floatStars {
 
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0px) rotate(0deg);
   }
 
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-20px) rotate(180deg);
   }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.stars {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  perspective: 1000px;
+}
+
+.constellation {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.message-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  z-index: 1;
+  perspective: 1000px;
+}
+
+.title {
+  font-size: 4em;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShine 4s linear infinite;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.message-box {
+  position: relative;
+  max-width: 800px;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  transform-style: preserve-3d;
+  /* Added transition timing for smoother movement */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.message {
+  color: white;
+  line-height: 1.6;
+  font-size: 1.2em;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.falling-stars-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.falling-star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+}
+
+.falling-star::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, white, transparent);
+  transform: translateX(-100%);
+}
+
+.gradient-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      #02071b,
+      #0a1635,
+      #1a1f40,
+      #0a1635,
+      #02071b);
+  background-size: 200% 200%;
+  animation: gradientMove 15s linear infinite;
+  z-index: -1;
+}
+
+.moon {
+  top: 3.5rem;
+  right: 0%;
+  width: 15rem;
+  height: 15rem;
+  position: fixed;
+  border-radius: 50%;
+  background-image: url('https://www.solarsystemscope.com/textures/download/2k_moon.jpg');
+  background-repeat: repeat-x;
+  background-size: 110% 100%;
+  animation: moonRotation 15s linear infinite forwards;
+  box-shadow:
+    inset -10px 8px 6px -5px #ffffff,
+    inset 20px -20px 40px 30px rgba(0, 0, 0, 0.9),
+    7px -6px 14px rgba(255, 255, 255, 0.32);
+}
+
+@keyframes moonRotation {
+  0% {
+    background-position: 0% 0%;
+    border: 0px solid #00000000;
+  }
+
+  50% {
+    background-position: 150% 0%;
+    border: 0px solid #00000000;
+  }
+
+  100% {
+    background-position: 300% 0%;
+    border: 0px solid #00000000;
+  }
+}
+
+.memory-wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.memory-card {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: transform 0.5s, background 0.5s;
+  transform-style: preserve-3d;
+  text-align: center;
+  padding: 20px;
+}
+
+.memory-card:hover {
+  transform: scale(1.05) rotateY(10deg);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #0e111d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  width: 100%;
+  max-width: 900px;
+  position: relative;
+  overflow: hidden;
+  color: rgb(225, 216, 216);
+}
+
+.modal-close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-image {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Change to 'contain' if you want to see the whole image */
+  object-position: center;
 }
