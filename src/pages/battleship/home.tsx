@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Battleship from "./battleship";
-import { GameLayout } from "../components/home";
+import { GameLayout } from "../../components/home";
 import BattleArena from "./arena";
 
 const Home = () => {

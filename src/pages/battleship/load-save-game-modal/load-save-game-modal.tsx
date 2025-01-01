@@ -1,5 +1,5 @@
 import React from "react";
-import "../../assets/css/save-game-modal.css";
+import "../../../assets/css/save-game-modal.css";
 
 export const LoadSavedGameModal: React.FC<{
   handleLoadGame: () => void;
