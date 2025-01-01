@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { shipsData, GRID_WIDTH, GRID_HEIGHT } from "../constants/constants";
+import { shipsData, GRID_WIDTH, GRID_HEIGHT } from "../../constants/constants";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../context/theme-context";
-import DeleteIcon from "../assets/icons/delete-icon";
+import { useTheme } from "../../context/theme-context";
+import DeleteIcon from "../../assets/icons/delete-icon";
 import cryptoRandomString from "crypto-random-string";
 import { toast } from "react-toastify";
 import {
@@ -10,8 +10,8 @@ import {
   generateKey,
   handleRandomPlacement,
   validatePlacement,
-} from "../utils";
-import { ShipInterface } from "../constants/interface";
+} from "../../utils";
+import { ShipInterface } from "../../constants/interface";
 
 interface TileInterface {
   row: number;

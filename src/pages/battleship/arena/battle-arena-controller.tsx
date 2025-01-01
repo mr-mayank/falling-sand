@@ -5,16 +5,16 @@ import {
   encryptData,
   generateKey,
   handleRandomPlacement,
-} from "../../utils";
+} from "../../../utils";
 import { toast } from "react-toastify";
-import { useTheme } from "../../context/theme-context";
-import { ShipInterface } from "../../constants/interface";
+import { useTheme } from "../../../context/theme-context";
+import { ShipInterface } from "../../../constants/interface";
 import {
   GRID_HEIGHT,
   GRID_WIDTH,
   TOTAL_SHIP_SIZE,
   shipsData,
-} from "../../constants/constants";
+} from "../../../constants/constants";
 
 interface ShipInterfaceP2 {
   id: number;
