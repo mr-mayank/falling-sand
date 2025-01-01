@@ -1,9 +1,9 @@
 import React from "react";
-import "../assets/css/battleship.css";
+import "../../assets/css/battleship.css";
 import BattleshipController from "./battleship-controller";
-import RotateIcon from "../assets/icons/rotate-icon";
+import RotateIcon from "../../assets/icons/rotate-icon";
 import LoadSavedGameModal from "./load-save-game-modal/load-save-game-modal";
-import BattleshipLoader from "../components/battleship-loader";
+import BattleshipLoader from "../../components/battleship-loader";
 
 const TileGrid = () => {
   const {
