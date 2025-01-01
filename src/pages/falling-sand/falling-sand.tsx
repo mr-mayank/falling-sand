@@ -1,6 +1,6 @@
 //@ts-nocheck
 import React, { useState, useRef, useCallback, useEffect } from "react";
-import "../assets/css/Grid.css";
+import "../../assets/css/Grid.css";
 
 const FallingSand = () => {
   const gridSize = 40;

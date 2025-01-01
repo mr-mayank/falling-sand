@@ -4,6 +4,7 @@ import { useTheme } from "../../context/theme-context";
 import SunIcon from "../../assets/icons/sun-icon";
 import MoonIcon from "../../assets/icons/moon-icon";
 import HomeIcon from "../../assets/icons/home-icon";
+import UserMenu from "../user-menu";
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -48,7 +49,10 @@ const HomePage = () => {
     <div className={`home-container theme-${theme}`}>
       <AnimatedBackground />
       <div className="content">
-        <ThemeToggle />
+        <div className="top-bar">
+          <ThemeToggle />
+          <UserMenu />
+        </div>
         <h1 className="glitch" data-text="Game Playground">
           Game Playground
         </h1>
@@ -78,7 +82,10 @@ const GameLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className={`game-layout theme-${theme}`}>
-      <ThemeToggle />
+      <div className="top-bar">
+        <ThemeToggle />
+        <UserMenu />
+      </div>
       <button
         onClick={() => navigate("/")}
         className="home-button"

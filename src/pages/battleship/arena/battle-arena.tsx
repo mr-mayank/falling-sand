@@ -1,8 +1,8 @@
 import React from "react";
 import useBattleArenaController from "./battle-arena-controller";
-import BattleshipLoader from "../../components/battleship-loader";
-import { TOTAL_SHIP_SIZE } from "../../constants/constants";
-import GameResultModal from "../../components/game-result-modal";
+import BattleshipLoader from "../../../components/battleship-loader";
+import { TOTAL_SHIP_SIZE } from "../../../constants/constants";
+import GameResultModal from "../../../components/game-result-modal";
 
 const BattleArena = () => {
   const {
