@@ -56,10 +56,10 @@ apiClient.interceptors.response.use(
 );
 
 // Custom response transformation (optional)
-const transformResponse = (response: any) => ({
-  statusCode: response.status,
-  response: response.data,
-});
+// const transformResponse = (response: any) => ({
+//   statusCode: response.status,
+//   response: response.data,
+// });
 
-export { transformResponse };
+// export { transformResponse };
 export default apiClient;
