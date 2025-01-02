@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import UserIcon from "../../assets/icons/user-icon";
 import { useUser } from "../../context/user-context";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const UserDropdown = () => {
   const { user, logout } = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -13,11 +14,24 @@ const UserDropdown = () => {
 
   const handleSignOut = () => {
     setIsDropdownOpen(false);
+    logout();
   };
 
   const handleSignIn = (type: string) => {
     setIsDropdownOpen(false);
-    navigate("/auth?" + type + "=true");
+    const urlParams = new URLSearchParams(location.search);
+    if (
+      location.pathname !== "/auth" &&
+      location.pathname !== "/auth?signin=true" &&
+      location.pathname !== "/auth?signup=true" &&
+      location.pathname.length > 1
+    ) {
+      navigate("/auth?" + type + "=true&redirect=" + location.pathname);
+    } else if (urlParams.get("redirect")) {
+      navigate("/auth?" + type + "=truer&edirect=" + urlParams.get("redirect"));
+    } else {
+      navigate("/auth?" + type + "=true");
+    }
   };
 
   return (
@@ -31,11 +45,13 @@ const UserDropdown = () => {
       </button>
       {isDropdownOpen && (
         <div className="dropdown-menu">
-          {false ? (
+          {user ? (
             <>
               <div className="user-info">
-                <span className="user-name">{"userName"}</span>
-                <span className="user-email">{"userEmail"}</span>
+                {user?.name && <span className="user-name">{user.name}</span>}
+                {user?.email && (
+                  <span className="user-email">{user.email}</span>
+                )}
               </div>
               <div className="dropdown-divider"></div>
               <button className="dropdown-item" onClick={handleSignOut}>
