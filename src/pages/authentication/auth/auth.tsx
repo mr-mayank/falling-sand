@@ -1,101 +1,17 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React from "react";
 import "../../../assets/css/auth.css";
-import { useTheme } from "../../../context/theme-context";
-
-interface FormData {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-interface FormErrors {
-  username?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-}
+import useAuthController from "./auth-controller";
 
 const AuthPages: React.FC = () => {
-  const { theme } = useTheme();
-  const [isSignIn, setIsSignIn] = useState<boolean>(true);
-  const [formData, setFormData] = useState<FormData>({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("signin")) {
-      setIsSignIn(true);
-    } else if (urlParams.get("signup")) {
-      setIsSignIn(false);
-    }
-  }, []);
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    if (!isSignIn) {
-      // Signup validation
-      if (!formData.username.trim()) {
-        newErrors.username = "Username is required";
-      } else if (formData.username.length < 3) {
-        newErrors.username = "Username must be at least 3 characters";
-      }
-
-      if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = "Email format is invalid";
-      }
-
-      if (!formData.password) {
-        newErrors.password = "Password is required";
-      } else if (formData.password.length < 6) {
-        newErrors.password = "Password must be at least 6 characters";
-      }
-
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords do not match";
-      }
-    } else {
-      // Signin validation
-      if (!formData.username) {
-        newErrors.username = "Username or Email is required";
-      }
-      if (!formData.password) {
-        newErrors.password = "Password is required";
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log("Form submitted:", formData);
-      // Handle form submission
-    }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors({
-        ...errors,
-        [name]: "",
-      });
-    }
-  };
+  const {
+    theme,
+    isSignIn,
+    formData,
+    errors,
+    handleChange,
+    handleSubmit,
+    handleFormChange,
+  } = useAuthController();
 
   return (
     <div data-theme={`${theme}`}>
@@ -179,7 +95,9 @@ const AuthPages: React.FC = () => {
               {isSignIn ? "Don't have an account?" : "Already have an account?"}
               <button
                 className="toggle-btn"
-                onClick={() => setIsSignIn(!isSignIn)}
+                onClick={() => {
+                  handleFormChange();
+                }}
               >
                 {isSignIn ? "Sign Up" : "Sign In"}
               </button>

@@ -1,8 +1,10 @@
+import Cookies from "js-cookie";
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import { USER_ACCESS_KEY } from "../utils/enum";
 
 type User = {
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
 } | null;
 
 type UserContextType = {
@@ -18,6 +20,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
+    Cookies.remove(USER_ACCESS_KEY.TOKEN);
   };
 
   return (
