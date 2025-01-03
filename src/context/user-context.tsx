@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { USER_ACCESS_KEY } from "../utils/enum";
 
 type User = {
+  id?: string;
   name?: string;
   email?: string;
 } | null;
