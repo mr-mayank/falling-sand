@@ -28,7 +28,9 @@ const UserDropdown = () => {
     ) {
       navigate("/auth?" + type + "=true&redirect=" + location.pathname);
     } else if (urlParams.get("redirect")) {
-      navigate("/auth?" + type + "=truer&edirect=" + urlParams.get("redirect"));
+      navigate(
+        "/auth?" + type + "=truer&redirect=" + urlParams.get("redirect")
+      );
     } else {
       navigate("/auth?" + type + "=true");
     }

@@ -1,0 +1,468 @@
+/* Modal Base Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 15px;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.theme-dark .modal-content {
+    background: var(--bg-primary-dark);
+    border: 1px solid var(--border-color-dark);
+    color: var(--text-primary-dark);
+}
+
+.theme-light .modal-content {
+    background: var(--bg-primary-light);
+    border: 1px solid var(--border-color-light);
+    color: var(--text-primary-light);
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: inherit;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.theme-dark .modal-close:hover {
+    background: var(--bg-secondary-dark);
+}
+
+.theme-light .modal-close:hover {
+    background: var(--bg-secondary-light);
+}
+
+/* Login Modal Specific Styles */
+.login-modal {
+    text-align: center;
+}
+
+.login-modal h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.login-modal p {
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+/* Room Modal Specific Styles */
+.room-modal {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.room-search {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+}
+
+.refresh-button {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.theme-dark .refresh-button {
+    background: var(--bg-secondary-dark);
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-light .refresh-button {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-color-light);
+}
+
+.refresh-button:hover:not(:disabled) {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.refresh-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Refresh icon animation */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.refresh-button.refreshing svg {
+    animation: spin 1s linear infinite;
+}
+
+.theme-dark .room-search {
+    background: var(--bg-secondary-dark);
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-light .room-search {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-color-light);
+}
+
+.rooms-list {
+    flex: 1;
+    overflow-y: auto;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 8px;
+    max-height: 300px;
+}
+
+.room-item {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-dark .room-item {
+    background: var(--bg-secondary-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-light .room-item {
+    background: var(--bg-secondary-light);
+    border: 1px solid var(--border-color-light);
+}
+
+.room-item.selected {
+    transform: scale(1.02);
+    border-color: #4a9eff;
+}
+
+.room-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-name {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.lock-icon {
+    opacity: 0.7;
+}
+
+.room-stats {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.room-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+}
+
+.room-status.waiting {
+    background: #4caf50;
+    color: white;
+}
+
+.room-status.in_progress {
+    background: #ff9800;
+    color: white;
+}
+
+/* Button Styles */
+.modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.modal-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.theme-dark .modal-button {
+    background: var(--bg-secondary-dark);
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-light .modal-button {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-color-light);
+}
+
+.modal-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add these styles to your existing modal CSS */
+
+.password-modal {
+    max-width: 400px;
+}
+
+.password-modal h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.room-name-display {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+    font-size: 1rem;
+}
+
+.password-input-container {
+    margin: 1.5rem 0;
+}
+
+.password-input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.theme-dark .password-input {
+    background: var(--bg-secondary-dark);
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-color-dark);
+}
+
+.theme-light .password-input {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-color-light);
+}
+
+.password-input.error {
+    border-color: #ff4444;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    text-align: left;
+}
+
+/* Specific button styles for password modal */
+.password-modal .modal-buttons {
+    margin-top: 2rem;
+}
+
+.cancel-button {
+    background: transparent !important;
+}
+
+.submit-button {
+    background: #4a9eff !important;
+    color: white !important;
+}
+
+.theme-dark .submit-button:hover {
+    background: #3d8ae0 !important;
+}
+
+.theme-light .submit-button:hover {
+    background: #3d8ae0 !important;
+}
+
+/* Make sure password modal appears above room modal */
+.password-modal {
+    z-index: 1100;
+}
+
+/* Add subtle shake animation for error */
+@keyframes shakeError {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-4px);
+    }
+
+    75% {
+        transform: translateX(4px);
+    }
+}
+
+.password-input.error {
+    animation: shakeError 0.2s ease-in-out;
+}
+
+/* Create Room Modal Styles */
+.create-room-modal {
+    max-width: 400px;
+}
+
+.create-room-modal h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.form-group input.error {
+    border-color: #ff4444;
+    animation: shakeError 0.2s ease-in-out;
+}
+
+.radio-group {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+.error-message {
+    color: #ff4444;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Theme-specific styles */
+.theme-dark .form-group input[type="text"],
+.theme-dark .form-group input[type="password"] {
+    background: var(--bg-secondary-dark);
+    color: var(--text-primary-dark);
+    border-color: var(--border-color-dark);
+}
+
+.theme-light .form-group input[type="text"],
+.theme-light .form-group input[type="password"] {
+    background: var(--bg-secondary-light);
+    color: var(--text-primary-light);
+    border-color: var(--border-color-light);
+}
+
+/* Focus states */
+.form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus {
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+}
