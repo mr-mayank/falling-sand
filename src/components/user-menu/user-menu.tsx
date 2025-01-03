@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import UserIcon from "../../assets/icons/user-icon";
 import { useUser } from "../../context/user-context";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,10 +7,7 @@ const UserDropdown = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
+  const dropdownRef = useRef<any>(null);
 
   const handleSignOut = () => {
     setIsDropdownOpen(false);
@@ -35,18 +32,36 @@ const UserDropdown = () => {
       navigate("/auth?" + type + "=true");
     }
   };
+  const handleMouseLeave = (e: any) => {
+    const dropdownElement = dropdownRef.current;
+    const relatedTarget = e.relatedTarget;
 
+    if (
+      !dropdownElement?.contains(relatedTarget) &&
+      !e.currentTarget.contains(relatedTarget)
+    ) {
+      setIsDropdownOpen(false);
+    }
+  };
   return (
-    <div className="user-dropdown" style={{ position: "relative" }}>
+    <div
+      className="user-dropdown"
+      style={{ position: "relative" }}
+      onMouseLeave={(e) => handleMouseLeave(e)}
+    >
       <button
         className="user-icon-button"
-        onClick={toggleDropdown}
+        onMouseEnter={() => setIsDropdownOpen(true)}
         aria-label="User Menu"
       >
         <UserIcon />
       </button>
       {isDropdownOpen && (
-        <div className="dropdown-menu">
+        <div
+          onMouseEnter={() => setIsDropdownOpen(true)}
+          className={`dropdown-menu`}
+          id={`${isDropdownOpen ? "dropdown-open" : "dropdown"}`}
+        >
           {user ? (
             <>
               <div className="user-info">
