@@ -66,6 +66,13 @@ const useAuthController = () => {
         newErrors.password = "Password must be at least 6 characters";
       }
 
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Confirm Password is required";
+      } else if (formData.confirmPassword.length < 6) {
+        newErrors.confirmPassword =
+          "Confirm Password must be at least 6 characters";
+      }
+
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = "Passwords do not match";
       }
