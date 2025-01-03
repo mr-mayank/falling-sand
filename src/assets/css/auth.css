@@ -22,11 +22,9 @@
 
 /* Light theme styles */
 [data-theme="light"] .auth-container {
-  background: linear-gradient(
-    135deg,
-    var(--light-bg-gradient-from),
-    var(--light-bg-gradient-to)
-  );
+  background: linear-gradient(135deg,
+      var(--light-bg-gradient-from),
+      var(--light-bg-gradient-to));
 }
 
 [data-theme="light"] .form-container {
@@ -55,11 +53,9 @@
 
 /* Dark theme styles */
 [data-theme="dark"] .auth-container {
-  background: linear-gradient(
-    135deg,
-    var(--dark-bg-gradient-from),
-    var(--dark-bg-gradient-to)
-  );
+  background: linear-gradient(135deg,
+      var(--dark-bg-gradient-from),
+      var(--dark-bg-gradient-to));
 }
 
 [data-theme="dark"] .form-container {
@@ -237,6 +233,7 @@
 }
 
 @keyframes shake {
+
   0%,
   100% {
     transform: translateX(0);

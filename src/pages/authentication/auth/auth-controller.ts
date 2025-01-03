@@ -50,7 +50,6 @@ const useAuthController = () => {
     const newErrors: FormErrors = {};
 
     if (!isSignIn) {
-      // Signup validation
       if (!formData.username.trim()) {
         newErrors.username = "Username is required";
       } else if (formData.username.length < 3) {
@@ -71,7 +70,6 @@ const useAuthController = () => {
         newErrors.confirmPassword = "Passwords do not match";
       }
     } else {
-      // Signin validation
       if (!formData.username) {
         newErrors.username = "Username or Email is required";
       }
@@ -87,12 +85,11 @@ const useAuthController = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted:", formData);
-    }
-    if (isSignIn) {
-      signin.mutate(formData);
-    } else {
-      signup.mutate(formData);
+      if (isSignIn) {
+        signin.mutate(formData);
+      } else {
+        signup.mutate(formData);
+      }
     }
   };
 
@@ -112,6 +109,7 @@ const useAuthController = () => {
   };
 
   const handleFormChange = () => {
+    setErrors({});
     navigate(`?${!isSignIn ? "signin=true" : "signup=true"}`);
   };
 
@@ -132,10 +130,18 @@ const useAuthController = () => {
         });
       }
       setUser({
+        id: isSignIn ? signin.data?.id : signup.data?.id,
         email: isSignIn ? signin.data?.email : signup.data?.email,
         name: isSignIn ? signin.data?.username : signup.data?.username,
       });
-      navigate("/");
+      const urlParams = new URLSearchParams(search);
+      const redirect = urlParams.get("redirect");
+
+      if (redirect) {
+        navigate(redirect);
+      } else {
+        navigate("/");
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signin.isSuccess, signin.data, signup.isSuccess, signup.data]);
