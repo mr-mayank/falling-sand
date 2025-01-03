@@ -37,7 +37,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
 
   return (
     <div className={`modal-overlay theme-${theme}`}>
-      <div className="modal-content password-modal">
+      <div className="modal-content password-modal modal-room-password">
         <button className="modal-close" onClick={onClose}>
           ×
         </button>
