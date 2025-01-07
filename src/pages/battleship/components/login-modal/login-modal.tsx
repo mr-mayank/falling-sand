@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useTheme } from "../../context/theme-context";
+import { useTheme } from "../../../../context/theme-context";
 
 interface LoginModalProps {
   isVisible: boolean;

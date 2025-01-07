@@ -25,10 +25,43 @@ export interface ISignIn {
   password: string;
 }
 
+export interface ICreateGame {
+  roomID: string;
+  password: string;
+  status: string;
+  player1: string;
+}
+
+export interface IJoinGame {
+  roomID: string;
+  player: string;
+  password: string;
+}
+
+export interface IKickPlayer {
+  roomID: string;
+  player: string;
+}
+
+export interface ILeaveGame {
+  roomID: string;
+  player: string;
+}
+
+export interface IStartGame {
+  roomID: string;
+  player: string;
+}
+
+export interface IUpdateGameBoard {
+  roomID: string;
+  player: string;
+  board: string;
+}
+
 export interface ISignUp {
   username: string;
   password: string;
-  confirmPassword: string;
   email?: string;
 }
 
@@ -37,4 +70,19 @@ export interface ILinkData {
   username: string;
   email: string;
   token: string;
+}
+
+export interface IUserDetails {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface IRoomsData {
+  roomID: string;
+  player1: string;
+  player2: string;
+  status: string;
+  password: string;
+  _id: string;
 }
