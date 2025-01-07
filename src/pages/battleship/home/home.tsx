@@ -1,26 +1,22 @@
-import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Battleship from "./battleship";
-import { GameLayout } from "../../components/home";
-import BattleArena from "./arena";
-import { useUser } from "../../context/user-context";
-import LoginModal from "../../components/login-modal";
-import "../../assets/css/game-modal.css";
-import RoomListModal from "../../components/room-list-modal";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Battleship from "../battleship";
+import { GameLayout } from "../../../components/home";
+import BattleArena from "../arena";
+import LoginModal from "../components/login-modal";
+import RoomListModal from "../components/room-list-modal";
+import "../../../assets/css/game-modal.css";
+import useHomeController from "./home-controller";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { user } = useUser();
-  const [isRoomModalVisible, setIsRoomModalVisible] = useState(false);
-  const [isLoginModalVisible, setIsLoginModalVisible] = useState(false);
-
-  const handlePlayVsFriend = () => {
-    if (user) {
-      setIsRoomModalVisible(true);
-    } else {
-      setIsLoginModalVisible(true);
-    }
-  };
+  const {
+    navigate,
+    isRoomModalVisible,
+    isLoginModalVisible,
+    handlePlayVsFriend,
+    setIsRoomModalVisible,
+    setIsLoginModalVisible,
+  } = useHomeController();
 
   return (
     <>

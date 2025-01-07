@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useTheme } from "../../context/theme-context";
-import RefreshIcon from "../../assets/icons/refresh-icon";
+import { useTheme } from "../../../../context/theme-context";
+import RefreshIcon from "../../../../assets/icons/refresh-icon";
 import CreateRoomModal from "../create-room-modal";
 import PasswordModal from "../password-modal";
 

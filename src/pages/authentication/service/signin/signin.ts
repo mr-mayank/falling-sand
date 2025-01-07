@@ -19,6 +19,6 @@ const signin = async (signIn: ISignIn) => {
 };
 
 const useSignin = () =>
-  useMutation<ILinkData, IAPIError, ISignIn>([API_MUTATION_KEY.SIGNUP], signin);
+  useMutation<ILinkData, IAPIError, ISignIn>([API_MUTATION_KEY.SIGNIN], signin);
 
 export default useSignin;
