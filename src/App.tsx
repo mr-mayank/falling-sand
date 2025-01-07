@@ -4,7 +4,7 @@ import { QueryClientProvider } from "react-query";
 import { ThemeProvider } from "./context/theme-context";
 import FallingSand from "./pages/falling-sand";
 import { GameLayout, HomePage } from "./components/home";
-import Home from "./pages/battleship/home";
+import Home from "./pages/battleship/home/home";
 import { UserProvider } from "./context/user-context";
 import Auth from "./pages/authentication/auth";
 import queryClient from "./query-client";
