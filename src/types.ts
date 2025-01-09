@@ -27,15 +27,15 @@ export interface ISignIn {
 
 export interface ICreateGame {
   roomID: string;
-  password: string;
   status: string;
   player1: string;
+  password?: string;
 }
 
 export interface IJoinGame {
   roomID: string;
   player: string;
-  password: string;
+  password?: string;
 }
 
 export interface IKickPlayer {

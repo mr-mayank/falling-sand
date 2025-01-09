@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import useCreateRoomModalController from "./create-room-modal-controller";
 
 interface CreateRoomModalProps {
   isVisible: boolean;
@@ -15,44 +16,25 @@ const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const [roomName, setRoomName] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string>("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!roomName.trim()) {
-      setError("Room name is required");
-      return;
-    }
-
-    if (isPrivate && !password.trim()) {
-      setError("Password is required for private rooms");
-      return;
-    }
-
-    onSubmit({
-      name: roomName,
-      isPrivate,
-      ...(isPrivate && { password }),
-    });
-
-    // Reset form
-    setRoomName("");
-    setIsPrivate(false);
-    setPassword("");
-    setError("");
-    onClose();
-  };
+  const {
+    roomName,
+    isPrivate,
+    password,
+    error,
+    handleSubmit,
+    setRoomName,
+    setIsPrivate,
+    setPassword,
+    setError,
+    onModalClose,
+  } = useCreateRoomModalController({ onClose, onSubmit });
 
   if (!isVisible) return null;
 
   return (
     <div className="modal-overlay">
       <div className="modal-content create-room-modal">
-        <button className="modal-close" onClick={onClose}>
+        <button className="modal-close" onClick={onModalClose}>
           ×
         </button>
         <h2>Create New Room</h2>
