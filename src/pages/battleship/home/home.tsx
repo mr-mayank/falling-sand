@@ -7,12 +7,14 @@ import LoginModal from "../components/login-modal";
 import RoomListModal from "../components/room-list-modal";
 import "../../../assets/css/game-modal.css";
 import useHomeController from "./home-controller";
+import LaunchPage from "../launch-page";
 
 const Home = () => {
   const {
     navigate,
     isRoomModalVisible,
     isLoginModalVisible,
+    allRoomsData,
     handlePlayVsFriend,
     setIsRoomModalVisible,
     setIsLoginModalVisible,
@@ -63,6 +65,15 @@ const Home = () => {
             </GameLayout>
           }
         />
+
+        <Route
+          path="launch/:id"
+          element={
+            <GameLayout>
+              <LaunchPage />
+            </GameLayout>
+          }
+        />
       </Routes>
 
       <LoginModal
@@ -71,6 +82,7 @@ const Home = () => {
       />
 
       <RoomListModal
+        allRoomsData={allRoomsData}
         isVisible={isRoomModalVisible}
         onClose={() => setIsRoomModalVisible(false)}
       />
