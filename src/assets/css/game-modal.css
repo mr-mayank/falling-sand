@@ -224,7 +224,7 @@
     color: white;
 }
 
-.room-status.in_progress {
+.room-status.active {
     background: #ff9800;
     color: white;
 }
