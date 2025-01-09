@@ -1,5 +1,5 @@
 export const USER_ACCESS_KEY = {
-  TOKEN: "accessToken",
+  TOKEN: "gameAccessToken",
 };
 
 export const API_MUTATION_KEY = {

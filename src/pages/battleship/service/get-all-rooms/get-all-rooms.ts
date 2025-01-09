@@ -17,12 +17,13 @@ const getAllRooms = async () => {
   return result.data.Data;
 };
 
-const useGetAllRooms = () =>
+const useGetAllRooms = (isRoomModalVisible: boolean) =>
   useQuery<IGetAllRoomsData, IAPIError>(
     [API_MUTATION_KEY.GET_ALL_ROOMS],
     getAllRooms,
     {
       cacheTime: 0,
+      enabled: isRoomModalVisible,
     }
   );
 
