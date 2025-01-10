@@ -18,6 +18,7 @@ const Home = () => {
     handlePlayVsFriend,
     setIsRoomModalVisible,
     setIsLoginModalVisible,
+    handleRefreshRoomList,
   } = useHomeController();
 
   return (
@@ -84,6 +85,7 @@ const Home = () => {
       <RoomListModal
         allRoomsData={allRoomsData}
         isVisible={isRoomModalVisible}
+        handleRefreshRoomList={handleRefreshRoomList}
         onClose={() => setIsRoomModalVisible(false)}
       />
     </>

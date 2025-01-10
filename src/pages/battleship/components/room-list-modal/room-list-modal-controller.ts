@@ -5,7 +5,10 @@ import { useUser } from "../../../../context/user-context";
 import { IRoomsData } from "../../../../types";
 import { useNavigate } from "react-router-dom";
 
-const useRoomListController = (onClose: () => void) => {
+const useRoomListController = (
+  onClose: () => void,
+  handleRefreshRoomList: () => void
+) => {
   const { theme } = useTheme();
   const { user } = useUser();
   const navigate = useNavigate();
@@ -45,7 +48,11 @@ const useRoomListController = (onClose: () => void) => {
   const handlePasswordSubmit = (password: string) => {
     console.log("Joining room with password:", selectedRoom?._id, password);
     setShowPasswordModal(false);
-    onClose();
+    joinRoom.mutate({
+      roomID: selectedRoom?.roomID || "",
+      player: user?.id || "",
+      password,
+    });
   };
 
   const handleRefresh = async () => {
@@ -53,20 +60,7 @@ const useRoomListController = (onClose: () => void) => {
     try {
       // Simulate API call with setTimeout
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Update rooms with new data
-      // In real implementation, you would fetch from your API
-      //   setRooms((prevRooms) => [
-      //     ...prevRooms,
-      //     {
-      //       id: String(prevRooms.length + 1),
-      //       name: `Battle Room ${prevRooms.length + 1}`,
-      //       isPasswordProtected: Math.random() > 0.5,
-      //       players: Math.floor(Math.random() * 2) + 1,
-      //       maxPlayers: 2,
-      //       status: Math.random() > 0.5 ? "waiting" : "active",
-      //     },
-      //   ]);
+      handleRefreshRoomList();
     } finally {
       setIsRefreshing(false);
     }
@@ -74,6 +68,7 @@ const useRoomListController = (onClose: () => void) => {
 
   useEffect(() => {
     if (createRoom.isSuccess) {
+      onClose();
       navigate(`/battleship/launch/${createRoom.data.id}`);
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,6 +76,7 @@ const useRoomListController = (onClose: () => void) => {
 
   useEffect(() => {
     if (joinRoom.isSuccess) {
+      onClose();
       navigate(`/battleship/launch/${joinRoom.data.id}`);
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps

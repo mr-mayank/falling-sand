@@ -20,10 +20,16 @@ const useHomeController = () => {
     }
   };
 
+  const handleRefreshRoomList = () => {
+    getAllRooms.refetch();
+  };
+
   useEffect(() => {
     if (getAllRooms.isSuccess && getAllRooms.data) {
       if (getAllRooms.data.items.length > 0) {
         setAllRoomsData(getAllRooms.data.items);
+      } else {
+        setAllRoomsData([]);
       }
     }
   }, [getAllRooms.isSuccess, getAllRooms.data]);
@@ -37,6 +43,7 @@ const useHomeController = () => {
     handlePlayVsFriend,
     setIsRoomModalVisible,
     setIsLoginModalVisible,
+    handleRefreshRoomList,
   };
 };
 
