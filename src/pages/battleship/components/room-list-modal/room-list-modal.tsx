@@ -9,12 +9,14 @@ interface RoomModalProps {
   allRoomsData: IRoomsData[];
   isVisible: boolean;
   onClose: () => void;
+  handleRefreshRoomList: () => void;
 }
 
 const RoomListModal: React.FC<RoomModalProps> = ({
   allRoomsData,
   isVisible,
   onClose,
+  handleRefreshRoomList,
 }) => {
   const {
     theme,
@@ -31,7 +33,7 @@ const RoomListModal: React.FC<RoomModalProps> = ({
     handleJoinRoom,
     handlePasswordSubmit,
     handleRefresh,
-  } = useRoomListController(onClose);
+  } = useRoomListController(onClose, handleRefreshRoomList);
 
   const filteredRooms = allRoomsData.filter((room) =>
     room.roomID.toLowerCase().includes(searchQuery.toLowerCase())
@@ -47,26 +49,25 @@ const RoomListModal: React.FC<RoomModalProps> = ({
             ×
           </button>
           <h2>Available Rooms</h2>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search rooms..."
+              disabled={allRoomsData.length === 0}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="room-search"
+            />
+            <button
+              onClick={handleRefresh}
+              className={`refresh-button ${isRefreshing ? "refreshing" : ""}`}
+              disabled={isRefreshing}
+            >
+              <RefreshIcon />
+            </button>
+          </div>
           {allRoomsData.length > 0 ? (
             <>
-              <div className="search-container">
-                <input
-                  type="text"
-                  placeholder="Search rooms..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="room-search"
-                />
-                <button
-                  onClick={handleRefresh}
-                  className={`refresh-button ${
-                    isRefreshing ? "refreshing" : ""
-                  }`}
-                  disabled={isRefreshing}
-                >
-                  <RefreshIcon />
-                </button>
-              </div>
               <div className="rooms-list">
                 {filteredRooms.map((room) => (
                   <div
