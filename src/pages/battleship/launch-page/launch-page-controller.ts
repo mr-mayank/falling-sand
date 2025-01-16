@@ -2,7 +2,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../../../context/theme-context";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../context/user-context";
-import { useGetGame, useKickPlayer, useLeaveGame } from "../service";
+import {
+  useGetGame,
+  useKickPlayer,
+  useLeaveGame,
+  useStartGame,
+} from "../service";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
 
@@ -31,6 +36,7 @@ const useLaunchPageController = () => {
   const { user } = useUser();
   const getGame = useGetGame(id);
   const leaveGame = useLeaveGame();
+  const startGame = useStartGame();
   const kickPlayer = useKickPlayer();
 
   const handleCopyLink = () => {
@@ -48,7 +54,12 @@ const useLaunchPageController = () => {
   };
 
   const handleStartGame = () => {
-    navigate(`/battleship/${id}`);
+    if (gameRoomDetails?.status === "waiting") {
+      startGame.mutate({
+        roomID: id || "",
+        player: user?.id || "",
+      });
+    }
   };
   const handleCopyHover = () => setShowUrlTooltip(true);
   const handleCopyLeave = () => setShowUrlTooltip(false);
@@ -112,6 +123,24 @@ const useLaunchPageController = () => {
   }, []);
 
   useEffect(() => {
+    if (startGame.isSuccess) {
+      navigate(`/battleship/multiplayer/create/${id}`);
+      socket?.emit("startGame", {
+        gameId: id,
+      });
+    }
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startGame.isSuccess]);
+
+  useEffect(() => {
+    if (startGame.isError) {
+      console.log(startGame.error);
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startGame.isError]);
+
+  useEffect(() => {
     if (!socket) return;
 
     // Join the game room
@@ -120,6 +149,10 @@ const useLaunchPageController = () => {
     // Listen for player updates
     socket.on("playerJoined", () => {
       getGame.refetch();
+    });
+
+    socket.on("gameStarted", () => {
+      navigate(`/battleship/multiplayer/create/${id}`);
     });
 
     socket.on("playerLeft", ({ playerId }: { playerId: string }) => {

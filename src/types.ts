@@ -57,6 +57,7 @@ export interface IUpdateGameBoard {
   roomID: string;
   player: string;
   board: string;
+  key: string;
 }
 
 export interface ISignUp {
