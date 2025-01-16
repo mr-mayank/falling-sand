@@ -8,6 +8,7 @@ import RoomListModal from "../components/room-list-modal";
 import "../../../assets/css/game-modal.css";
 import useHomeController from "./home-controller";
 import LaunchPage from "../launch-page";
+import Multiplayer from "../multiplayer";
 
 const Home = () => {
   const {
@@ -72,6 +73,15 @@ const Home = () => {
           element={
             <GameLayout>
               <LaunchPage />
+            </GameLayout>
+          }
+        />
+
+        <Route
+          path="multiplayer/*"
+          element={
+            <GameLayout>
+              <Multiplayer />
             </GameLayout>
           }
         />
