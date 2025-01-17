@@ -8,8 +8,9 @@ import {
   useLeaveGame,
   useStartGame,
 } from "../service";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { toast } from "react-toastify";
+import GameSocketService from "../../../apis/socketService";
 
 interface GameRoom {
   id: string;
@@ -114,22 +115,38 @@ const useLaunchPageController = () => {
   }, [leaveGame.isSuccess, leaveGame.data]);
 
   useEffect(() => {
-    const newSocket = io(process.env.REACT_APP_API_URL);
-    setSocket(newSocket);
+    const socketService = GameSocketService.getInstance();
+    const socket = socketService.connect(process.env.REACT_APP_API_URL || "");
+    setSocket(socket);
+
+    // Set current game information
+    if (user?.id && id) {
+      socketService.setCurrentGame(id, user.id);
+    }
 
     return () => {
-      newSocket.close();
+      // Only disconnect if we're actually leaving the game
+      // (not just navigating to create page)
+      if (!window.location.pathname.includes("/create/")) {
+        socketService.disconnect();
+      }
     };
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (startGame.isSuccess) {
-      navigate(`/battleship/multiplayer/create/${id}`);
+      const socketService = GameSocketService.getInstance();
+      // Use cleanDisconnect to keep socket alive but remove game-specific listeners
+      socketService.cleanDisconnect();
+
       socket?.emit("startGame", {
         gameId: id,
       });
-    }
 
+      navigate(`/battleship/multiplayer/create/${id}`);
+    }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startGame.isSuccess]);
 
@@ -143,28 +160,34 @@ const useLaunchPageController = () => {
   useEffect(() => {
     if (!socket) return;
 
-    // Join the game room
-    socket.emit("joinGame", { playerId: user?.id, gameId: id });
+    const socketService = GameSocketService.getInstance();
+    socketService.joinGame(user?.id || "", id || "");
 
-    // Listen for player updates
-    socket.on("playerJoined", () => {
+    socketService.onPlayerJoined(() => {
       getGame.refetch();
     });
 
-    socket.on("gameStarted", () => {
+    socketService.onGameStarted(() => {
       navigate(`/battleship/multiplayer/create/${id}`);
     });
 
-    socket.on("playerLeft", ({ playerId }: { playerId: string }) => {
+    socketService.onPlayerLeft(({ playerId, message, reason }) => {
       if (playerId === gameRoomDetails?.player1.id) {
-        toast("Host has left the Game ");
+        toast(
+          reason === "afk"
+            ? "Host has been disconnected due to inactivity"
+            : "Host has left the Game"
+        );
         navigate("/battleship");
       } else {
+        if (reason === "afk") {
+          toast("Player has been disconnected due to inactivity");
+        }
         getGame.refetch();
       }
     });
 
-    socket.on("playerKicked", ({ kickedPlayerId }) => {
+    socketService.onPlayerKicked(({ kickedPlayerId }) => {
       if (kickedPlayerId === user?.id) {
         toast("You have been kicked from the game");
         navigate("/battleship");
@@ -174,12 +197,10 @@ const useLaunchPageController = () => {
     });
 
     return () => {
-      socket.off("playerJoined");
-      socket.off("playerLeft");
-      socket.off("playerKicked");
+      socketService.removeAllListeners();
     };
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, gameRoomDetails?.player1.id]);
+  }, [socket, gameRoomDetails?.player1.id, user?.id, id]);
 
   const isHost = user?.id === gameRoomDetails?.player1.id;
   const canStartGame = gameRoomDetails?.player2 && isHost;
