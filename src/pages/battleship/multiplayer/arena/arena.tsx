@@ -6,6 +6,8 @@ import GameResultModal from "../../../../components/game-result-modal";
 
 const Arena = () => {
   const {
+    playerOne,
+    playerTwo,
     playerOneGrid,
     theme,
     playerTwoGrid,
@@ -22,8 +24,8 @@ const Arena = () => {
   }
 
   if (
-    totalShipsRevealed.playerOne === TOTAL_SHIP_SIZE ||
-    totalShipsRevealed.playerTwo === TOTAL_SHIP_SIZE
+    totalShipsRevealed?.playerOne === TOTAL_SHIP_SIZE ||
+    totalShipsRevealed?.playerTwo === TOTAL_SHIP_SIZE
   ) {
     return (
       <GameResultModal
@@ -42,7 +44,7 @@ const Arena = () => {
       }`}
     >
       <div className="battlefield-container">
-        <div className="battlefield-header">BOT</div>
+        <div className="battlefield-header">{playerOne || "Player 1"}</div>
         <div className="tile-grid2">
           {playerOneGrid.map((row, rowIndex) =>
             row.map((tile, colIndex) => (
@@ -74,7 +76,9 @@ const Arena = () => {
       </div>
 
       <div className="battlefield-container">
-        <div className="battlefield-header">YOU</div>
+        <div className="battlefield-header">
+          {playerTwo + "(you)" || "Player 2"}
+        </div>
         <div className="tile-grid2">
           {playerTwoGrid.map((row, rowIndex) =>
             row.map((tile, colIndex) => (

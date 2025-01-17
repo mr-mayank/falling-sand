@@ -18,7 +18,10 @@ interface GameRoom {
   };
   status: string;
   gameBoard1: string;
+  key1: string;
   gameBoard2: string;
+  key2: string;
+  turn: string;
 }
 const getGame = async (id?: string) => {
   const result = await apiClient.get<null, IAxiosResponse<GameRoom>>(
