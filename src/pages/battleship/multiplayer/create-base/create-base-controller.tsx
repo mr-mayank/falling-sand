@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 import {
   shipsData,
   GRID_WIDTH,
@@ -17,6 +18,7 @@ import {
 import { ShipInterface } from "../../../../constants/interface";
 import { useGetGame, useUpdateGameBoard } from "../../service";
 import { useUser } from "../../../../context/user-context";
+import GameSocketService from "../../../../apis/socketService";
 
 interface TileInterface {
   row: number;
@@ -52,9 +54,10 @@ const BattleshipController = () => {
       orientation: "horizontal",
     }))
   );
-
   const [selectedShip, setSelectedShip] = useState<ShipInterface | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [socket, setSocket] = useState<Socket | null>(null);
+
   const getGame = useGetGame(id);
   const updateGameBoard = useUpdateGameBoard();
 
@@ -331,6 +334,22 @@ const BattleshipController = () => {
             navigate(`/battleship/start/${getGame.data.id}`);
           }
         }
+        const socketService = GameSocketService.getInstance();
+        const socket =
+          socketService.getSocket() ||
+          socketService.connect(process.env.REACT_APP_API_URL || "");
+        setSocket(socket);
+
+        if (user?.id && id) {
+          // Ensure we're still part of the game
+          socketService.setCurrentGame(id, user.id);
+          socket.emit("reconnect_player", { playerId: user.id, gameId: id });
+        }
+
+        return () => {
+          // Don't disconnect socket when component unmounts
+          // Socket will be handled by the service
+        };
       } else {
         toast.error("You are not part of this Room");
         navigate("/battleship");
@@ -344,6 +363,13 @@ const BattleshipController = () => {
 
   useEffect(() => {
     if (updateGameBoard.isSuccess) {
+      const socketService = GameSocketService.getInstance();
+      // Use cleanDisconnect to keep socket alive but remove game-specific listeners
+      socketService.cleanDisconnect();
+
+      socket?.emit("creationComplete", {
+        gameId: id,
+      });
       toast("game saved");
       navigate(`/battleship/multiplayer/start/${id}`);
     }
@@ -356,6 +382,49 @@ const BattleshipController = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateGameBoard.isError]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const socketService = GameSocketService.getInstance();
+    socketService.joinGame(user?.id || "", id || "");
+
+    socketService.onCreateComplete(() => {
+      if (user?.id === getGame.data?.player1.id) {
+        toast(
+          !getGame.data?.player2?.name
+            ? "player 2"
+            : getGame.data?.player2.name + "has placed ship"
+        );
+      } else {
+        toast(
+          !getGame.data?.player1?.name
+            ? "player 2"
+            : getGame.data?.player1.name + "has placed ship"
+        );
+      }
+    });
+
+    socketService.onPlayerLeft(({ playerId, message, reason }) => {
+      if (playerId === getGame.data?.player1.id) {
+        toast(
+          reason === "afk"
+            ? "Host has been disconnected due to inactivity"
+            : "Host has left the Game"
+        );
+        navigate("/battleship");
+      } else {
+        if (reason === "afk") {
+          toast("Player has been disconnected due to inactivity");
+        }
+        getGame.refetch();
+      }
+    });
+    return () => {
+      socketService.removeAllListeners();
+    };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, getGame.data, user?.id, id]);
 
   return {
     grid,
