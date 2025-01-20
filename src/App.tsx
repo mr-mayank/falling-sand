@@ -42,6 +42,7 @@ const App = () => {
                   </GameLayout>
                 }
               />
+              
               <Route
                 path="/not-access"
                 element={
@@ -50,6 +51,7 @@ const App = () => {
                   </GameLayout>
                 }
               />
+
             </Routes>
           </Router>
         </ThemeProvider>

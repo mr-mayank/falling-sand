@@ -132,6 +132,7 @@ const useArenaController = () => {
             totalShipsRevealed.playerOne + 1 === TOTAL_SHIP_SIZE
               ? "complete"
               : false;
+
           setTotalShipsRevealed((prev) => ({
             ...prev,
             playerOne: prev.playerOne + 1,
@@ -144,6 +145,7 @@ const useArenaController = () => {
             status: status,
           });
           setCurrentMove({ row: rowIndex, col: colIndex });
+
         } else {
           updateGameBoard.mutate({
             roomID: id || "",
@@ -151,6 +153,7 @@ const useArenaController = () => {
             board: encryptedGridDataPlayer,
             turn: playerIds.playerOne,
           });
+
           setCurrentMove({ row: rowIndex, col: colIndex });
         }
       }
@@ -189,6 +192,7 @@ const useArenaController = () => {
     id,
   ]);
 
+
   useEffect(() => {
     if (updateGameBoard.isError) {
       console.log("updateGameBoard.isError", updateGameBoard.error);
@@ -213,6 +217,7 @@ const useArenaController = () => {
     }
     setPlayerTwoGrid(newGrid);
   };
+
 
   const loadSavedGame = useCallback(
     async (
@@ -301,6 +306,7 @@ const useArenaController = () => {
         setIsLoading(false);
       }, 1000);
 
+
       if (getGame.data.status === "finished") {
         endGameRedirection("home");
       }
@@ -363,6 +369,7 @@ const useArenaController = () => {
     const socketService = GameSocketService.getInstance();
     socketService.joinGame(user?.id || "", id || "");
 
+
     socketService.onCreateComplete(({ playerId }) => {
       if (user?.id !== playerId) {
         if (playerId !== getGame.data?.player1.id) {
@@ -388,12 +395,14 @@ const useArenaController = () => {
         handlePlayerTwoGridClick(data.move.row, data.move.col);
       }
       setCanPlay(data.turn === user?.id);
+
     });
     return () => {
       socketService.removeAllListeners();
     };
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket, getGame.data, user?.id, id, playerTwoGrid]);
+
 
   return {
     theme,
