@@ -44,6 +44,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (getUserDetails.isError) {
       if (Cookies.get(USER_ACCESS_KEY.TOKEN)) {
         Cookies.remove(USER_ACCESS_KEY.TOKEN);
+        setUser(null);
       }
     }
   }, [getUserDetails.isError]);

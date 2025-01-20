@@ -59,6 +59,7 @@ export interface IUpdateGameBoard {
   board: string;
   key?: string;
   turn?: string;
+  status?: string | false;
 }
 
 export interface ISignUp {

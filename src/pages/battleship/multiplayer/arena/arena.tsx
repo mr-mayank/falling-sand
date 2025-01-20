@@ -1,7 +1,6 @@
 import React from "react";
 import useArenaController from "./arena-controller";
 import BattleshipLoader from "../../../../components/battleship-loader";
-import { TOTAL_SHIP_SIZE } from "../../../../constants/constants";
 import GameResultModal from "../../../../components/game-result-modal";
 
 const Arena = () => {
@@ -14,7 +13,7 @@ const Arena = () => {
     isLoading,
     clickedTileP1,
     clickedTileP2,
-    totalShipsRevealed,
+    isWin,
     handlePlayerOneGridClick,
     endGameRedirection,
   } = useArenaController();
@@ -23,13 +22,10 @@ const Arena = () => {
     return <BattleshipLoader />;
   }
 
-  if (
-    totalShipsRevealed?.playerOne === TOTAL_SHIP_SIZE ||
-    totalShipsRevealed?.playerTwo === TOTAL_SHIP_SIZE
-  ) {
+  if (isWin !== null) {
     return (
       <GameResultModal
-        isWin={totalShipsRevealed.playerOne === TOTAL_SHIP_SIZE ? true : false}
+        isWin={isWin}
         onHome={() => endGameRedirection("home")}
         onNewGame={() => endGameRedirection("new")}
         theme={theme === "dark" ? "dark" : "light"}

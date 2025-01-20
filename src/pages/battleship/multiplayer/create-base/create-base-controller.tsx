@@ -55,7 +55,7 @@ const BattleshipController = () => {
     }))
   );
   const [selectedShip, setSelectedShip] = useState<ShipInterface | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   const getGame = useGetGame(id);
@@ -369,6 +369,7 @@ const BattleshipController = () => {
 
       socket?.emit("creationComplete", {
         gameId: id,
+        playerId: user?.id,
       });
       toast("game saved");
       navigate(`/battleship/multiplayer/start/${id}`);
@@ -389,19 +390,21 @@ const BattleshipController = () => {
     const socketService = GameSocketService.getInstance();
     socketService.joinGame(user?.id || "", id || "");
 
-    socketService.onCreateComplete(() => {
-      if (user?.id === getGame.data?.player1.id) {
-        toast(
-          !getGame.data?.player2?.name
-            ? "player 2"
-            : getGame.data?.player2.name + "has placed ship"
-        );
-      } else {
-        toast(
-          !getGame.data?.player1?.name
-            ? "player 2"
-            : getGame.data?.player1.name + "has placed ship"
-        );
+    socketService.onCreateComplete(({ playerId }) => {
+      if (user?.id !== playerId) {
+        if (playerId !== getGame.data?.player1.id) {
+          toast(
+            !getGame.data?.player2?.name
+              ? "player 2"
+              : getGame.data?.player2.name + "has placed ship"
+          );
+        } else {
+          toast(
+            !getGame.data?.player1?.name
+              ? "player 2"
+              : getGame.data?.player1.name + "has placed ship"
+          );
+        }
       }
     });
 
