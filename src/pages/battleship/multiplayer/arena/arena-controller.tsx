@@ -3,7 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { decryptData, encryptData } from "../../../../utils";
 import { toast } from "react-toastify";
 import { useTheme } from "../../../../context/theme-context";
-import { GRID_HEIGHT, GRID_WIDTH } from "../../../../constants/constants";
+import {
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  TOTAL_SHIP_SIZE,
+} from "../../../../constants/constants";
 import { useUser } from "../../../../context/user-context";
 import { useGetGame, useUpdateGameBoard } from "../../service";
 import { Socket } from "socket.io-client";
@@ -96,7 +100,7 @@ const useArenaController = () => {
       if (playerOneGrid[rowIndex][colIndex].isRevealed) return;
 
       setClickedTileP1({ row: rowIndex, col: colIndex });
-      setCurrentMove({ row: rowIndex, col: colIndex });
+
       setTimeout(() => setClickedTileP1(null), 600);
 
       const newGrid = [...playerOneGrid];
@@ -124,6 +128,11 @@ const useArenaController = () => {
 
       if (encryptedGridDataPlayer) {
         if (newGrid[rowIndex][colIndex].shipId !== -1) {
+          const status =
+            totalShipsRevealed.playerOne + 1 === TOTAL_SHIP_SIZE
+              ? "complete"
+              : false;
+
           setTotalShipsRevealed((prev) => ({
             ...prev,
             playerOne: prev.playerOne + 1,
@@ -133,7 +142,10 @@ const useArenaController = () => {
             player: user?.id || "",
             board: encryptedGridDataPlayer,
             turn: playerIds.playerTwo,
+            status: status,
           });
+          setCurrentMove({ row: rowIndex, col: colIndex });
+
         } else {
           updateGameBoard.mutate({
             roomID: id || "",
@@ -141,18 +153,22 @@ const useArenaController = () => {
             board: encryptedGridDataPlayer,
             turn: playerIds.playerOne,
           });
+
+          setCurrentMove({ row: rowIndex, col: colIndex });
         }
       }
     },
+
     [
       canPlay,
-      exportedKeyBase64,
-      id,
-      playerIds.playerOne,
-      playerIds.playerTwo,
       playerOneGrid,
+      exportedKeyBase64,
+      totalShipsRevealed.playerOne,
       updateGameBoard,
+      id,
       user?.id,
+      playerIds.playerTwo,
+      playerIds.playerOne,
     ]
   );
 
@@ -176,26 +192,32 @@ const useArenaController = () => {
     id,
   ]);
 
-  const handlePlayerTwoGridClick = useCallback(
-    (row: number, col: number) => {
-      if (playerTwoGrid[row][col].isRevealed) return;
 
-      setClickedTileP2({ row, col });
-      setTimeout(() => setClickedTileP2(null), 600);
+  useEffect(() => {
+    if (updateGameBoard.isError) {
+      console.log("updateGameBoard.isError", updateGameBoard.error);
+    }
+    //eslint-disable-next-line
+  }, [updateGameBoard.isError]);
 
-      const newGrid = [...playerTwoGrid];
-      newGrid[row][col].isRevealed = true;
+  const handlePlayerTwoGridClick = (row: number, col: number) => {
+    if (playerTwoGrid[+row][+col].isRevealed) return;
 
-      if (newGrid[row][col].shipId !== -1) {
-        setTotalShipsRevealed((prev) => ({
-          ...prev,
-          playerTwo: prev.playerTwo + 1,
-        }));
-      }
-      setPlayerTwoGrid(newGrid);
-    },
-    [playerTwoGrid]
-  );
+    setClickedTileP2({ row, col });
+    setTimeout(() => setClickedTileP2(null), 600);
+
+    const newGrid = [...playerTwoGrid];
+    newGrid[row][col].isRevealed = true;
+
+    if (newGrid[row][col].shipId !== -1) {
+      setTotalShipsRevealed((prev) => ({
+        ...prev,
+        playerTwo: prev.playerTwo + 1,
+      }));
+    }
+    setPlayerTwoGrid(newGrid);
+  };
+
 
   const loadSavedGame = useCallback(
     async (
@@ -232,16 +254,16 @@ const useArenaController = () => {
 
         if (player === "player1") {
           setPlayerOneGrid(decryptedGridData);
-          setTotalShipsRevealed({
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
             playerOne: shipRevealed,
-            playerTwo: totalShipsRevealed?.playerTwo || 0,
-          });
+          }));
         } else {
           setPlayerTwoGrid(decryptedGridData);
-          setTotalShipsRevealed({
-            playerOne: totalShipsRevealed?.playerOne || 0,
+          setTotalShipsRevealed((prev) => ({
+            ...prev,
             playerTwo: shipRevealed,
-          });
+          }));
         }
       } catch (error: Error | any) {
         if (error.name === "DataIntegrityError") {
@@ -263,7 +285,7 @@ const useArenaController = () => {
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [totalShipsRevealed?.playerOne, totalShipsRevealed?.playerTwo]
+    []
   );
 
   useEffect(() => {
@@ -272,12 +294,18 @@ const useArenaController = () => {
         setCanPlay(false);
       }
       if (
-        getGame.data.player1.id !== user?.id ||
-        getGame.data?.player2?.id !== user?.id
+        !(
+          getGame.data.player1.id === user?.id ||
+          getGame.data?.player2?.id === user?.id
+        )
       ) {
         toast.error("You are not part of this game");
         navigate("/battleship");
       }
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+
 
       if (getGame.data.status === "finished") {
         endGameRedirection("home");
@@ -341,33 +369,40 @@ const useArenaController = () => {
     const socketService = GameSocketService.getInstance();
     socketService.joinGame(user?.id || "", id || "");
 
-    socketService.onCreateComplete(() => {
-      if (user?.id === getGame.data?.player1.id) {
-        toast(
-          !getGame.data?.player2?.name
-            ? "player 2"
-            : getGame.data?.player2.name + "has placed ship"
-        );
-      } else {
-        toast(
-          !getGame.data?.player1?.name
-            ? "player 2"
-            : getGame.data?.player1.name + "has placed ship"
-        );
+
+    socketService.onCreateComplete(({ playerId }) => {
+      if (user?.id !== playerId) {
+        if (playerId !== getGame.data?.player1.id) {
+          toast(
+            !getGame.data?.player2?.name
+              ? "player 2"
+              : getGame.data?.player2.name + "has placed ship"
+          );
+        } else {
+          toast(
+            !getGame.data?.player1?.name
+              ? "player 2"
+              : getGame.data?.player1.name + "has placed ship"
+          );
+        }
       }
+      setCanPlay(false);
+      getGame.remove();
     });
 
-    socketService.onMovePlayed(({ data }) => {
+    socketService.onMovePlayed((data) => {
       if (user?.id !== data.playerId) {
-        handlePlayerTwoGridClick(data.row, data.col);
-        setCanPlay(data.turn === user?.id);
+        handlePlayerTwoGridClick(data.move.row, data.move.col);
       }
+      setCanPlay(data.turn === user?.id);
+
     });
     return () => {
       socketService.removeAllListeners();
     };
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, getGame.data, user?.id, id]);
+  }, [socket, getGame.data, user?.id, id, playerTwoGrid]);
+
 
   return {
     theme,
@@ -377,7 +412,6 @@ const useArenaController = () => {
     clickedTileP1,
     clickedTileP2,
     canPlay,
-    totalShipsRevealed,
     handlePlayerOneGridClick,
     endGameRedirection,
     playerOne:
@@ -388,6 +422,15 @@ const useArenaController = () => {
       getGame.data?.player2?.id === user?.id
         ? getGame.data?.player2?.name
         : getGame.data?.player1?.name,
+    isWin:
+      totalShipsRevealed?.playerOne === TOTAL_SHIP_SIZE ||
+      totalShipsRevealed?.playerTwo === TOTAL_SHIP_SIZE
+        ? totalShipsRevealed?.playerOne === TOTAL_SHIP_SIZE
+          ? true
+          : totalShipsRevealed?.playerTwo === TOTAL_SHIP_SIZE
+          ? false
+          : null
+        : null,
   };
 };
 
