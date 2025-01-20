@@ -2,6 +2,8 @@ import axios from "axios";
 import get from "lodash.get";
 import { USER_ACCESS_KEY } from "../utils/enum";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import { useUser } from "../context/user-context";
 
 const apiClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
@@ -29,6 +31,7 @@ apiClient.interceptors.response.use(
 
   // Handle errors
   async (error) => {
+    const { setUser } = useUser();
     if (
       error.response &&
       (error.response.status === 401 || error.response.status === 403) &&
@@ -40,6 +43,10 @@ apiClient.interceptors.response.use(
       (error?.response?.status === 400 || error?.response?.status === 404)
     ) {
       window.location.href = "/not-access";
+    } else if (error?.response?.status === 405) {
+      toast.error("token is expired please login and contine");
+      setUser(null);
+      Cookies.remove(USER_ACCESS_KEY.TOKEN);
     } else if (
       error?.response?.status === 500 ||
       error?.response?.status === 503
